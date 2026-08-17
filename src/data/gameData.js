@@ -10,6 +10,7 @@ export const items = {
 };
 
 export const materials = {
+  fresh_herb: { id:'fresh_herb', name:'薬草', icon:'🌿', value:5, bulk:1, shelfLife:75, desc:'採ってから75ステップで傷む生鮮品。' },
   slime_gel: { id:'slime_gel', name:'スライムゼリー', icon:'🫧', value:4, bulk:1 },
   beast_fang: { id:'beast_fang', name:'魔獣の牙', icon:'🦷', value:9, bulk:1 },
   iron_ore: { id:'iron_ore', name:'鉄鉱石', icon:'🪨', value:15, bulk:2 },
@@ -18,15 +19,16 @@ export const materials = {
   flame_crystal: { id:'flame_crystal', name:'炎晶石', icon:'🔶', value:95, bulk:1 },
   softwood: { id:'softwood', name:'やわらかい木材', icon:'🪵', value:5, bulk:2 },
   hardwood: { id:'hardwood', name:'堅木', icon:'🌳', value:18, bulk:2 },
-  river_fish: { id:'river_fish', name:'川魚', icon:'🐟', value:11, bulk:2 },
-  silver_fish: { id:'silver_fish', name:'銀うろこの魚', icon:'🐠', value:34, bulk:1 },
-  mushroom: { id:'mushroom', name:'森キノコ', icon:'🍄', value:8, bulk:1 },
+  river_fish: { id:'river_fish', name:'川魚', icon:'🐟', value:11, bulk:2, shelfLife:105, desc:'生魚。105ステップで傷む。' },
+  silver_fish: { id:'silver_fish', name:'銀うろこの魚', icon:'🐠', value:34, bulk:1, shelfLife:135, desc:'比較的日持ちする魚。135ステップで傷む。' },
+  mushroom: { id:'mushroom', name:'森キノコ', icon:'🍄', value:8, bulk:1, shelfLife:60, desc:'採取後60ステップで傷む。' },
   old_relic: { id:'old_relic', name:'古代の欠片', icon:'🏺', value:70, bulk:2 }
 };
 
 export const consumables = {
   potion: { id:'potion', name:'ポーション', icon:'🧪', price:60, bulk:1, desc:'保存が利く回復薬。HPを45回復。' },
-  rura_potion: { id:'rura_potion', name:'ルーラのポーション', icon:'🌀', price:180, bulk:1, desc:'探索中どこからでも村へ直帰する。' }
+  rura_potion: { id:'rura_potion', name:'ルーラのポーション', icon:'🌀', price:180, bulk:1, desc:'探索中どこからでも村へ直帰する。' },
+  camp_set: { id:'camp_set', name:'キャンプセット', icon:'⛺', price:260, bulk:5, max:1, reusable:true, desc:'重い野営道具。安全な場所で休める。準安全地帯では襲撃の危険あり。' }
 };
 
 export const backpacks = {
@@ -68,22 +70,22 @@ export const worldNodes = {
   old_well:{id:'old_well',name:'古井戸',icon:'🪣',zone:'outskirts',x:14,y:59,desc:'使われなくなった井戸。何か起きることもある。'},
   riverbank:{id:'riverbank',name:'浅瀬',icon:'🌊',zone:'river',x:14,y:46,desc:'川を渡れる浅瀬。'},
   fishing_bend:{id:'fishing_bend',name:'魚影の濃い淵',icon:'🎣',zone:'river',x:28,y:49,desc:'魚が集まる曲がり角。',resource:'fishing'},
-  waterfall:{id:'waterfall',name:'小さな滝',icon:'💧',zone:'river',x:22,y:35,desc:'冷たい水が流れ落ちる。'},
-  forest_edge:{id:'forest_edge',name:'森の入口',icon:'🌲',zone:'forest',x:40,y:57,desc:'木々が密になり始める。'},
+  waterfall:{id:'waterfall',name:'小さな滝',icon:'💧',zone:'river',x:22,y:35,desc:'冷たい水が流れ落ちる。',campSafety:'semi'},
+  forest_edge:{id:'forest_edge',name:'森の入口',icon:'🌲',zone:'forest',x:40,y:57,desc:'木々が密になり始める。',campSafety:'semi'},
   wood_grove:{id:'wood_grove',name:'伐採林',icon:'🪓',zone:'forest',x:72,y:62,desc:'切り頃の木が多い林。',resource:'woodcut'},
-  charcoal_hut:{id:'charcoal_hut',name:'炭焼き小屋跡',icon:'🛖',zone:'forest',x:82,y:52,desc:'誰もいない古い小屋。'},
+  charcoal_hut:{id:'charcoal_hut',name:'炭焼き小屋跡',icon:'🛖',zone:'forest',x:82,y:52,desc:'誰もいない古い小屋。',campSafety:'safe'},
   deep_forest:{id:'deep_forest',name:'深緑の森',icon:'🌳',zone:'forest',x:49,y:44,desc:'昼でも薄暗い森の中心部。'},
-  forest_spring:{id:'forest_spring',name:'森の泉',icon:'⛲',zone:'forest',x:37,y:36,desc:'澄んだ泉。毎回必ず安全とは限らない。'},
+  forest_spring:{id:'forest_spring',name:'森の泉',icon:'⛲',zone:'forest',x:37,y:36,desc:'澄んだ泉。周辺は比較的野営しやすい。',campSafety:'safe'},
   mushroom_ring:{id:'mushroom_ring',name:'キノコの輪',icon:'🍄',zone:'forest',x:60,y:34,desc:'妙に整ったキノコの群生地。'},
   shrine_path:{id:'shrine_path',name:'石祠への道',icon:'🪨',zone:'forest',x:29,y:26,desc:'苔むした石標が続く。'},
-  old_shrine:{id:'old_shrine',name:'森の石祠',icon:'🗿',zone:'forest',x:17,y:19,desc:'古い祠。時間帯で空気が変わる。'},
+  old_shrine:{id:'old_shrine',name:'森の石祠',icon:'🗿',zone:'forest',x:17,y:19,desc:'古い祠。時間帯で空気が変わる。',campSafety:'semi'},
   mountain_foot:{id:'mountain_foot',name:'山麓',icon:'⛰️',zone:'mountain',x:69,y:43,desc:'ここから勾配が急になる。'},
   quarry_road:{id:'quarry_road',name:'採石道',icon:'🥾',zone:'mountain',x:80,y:38,desc:'採石場へ続く荒れた道。'},
   quarry:{id:'quarry',name:'露天採掘場',icon:'⛏️',zone:'mountain',x:89,y:27,desc:'鉄鉱石が露出した採掘場。',resource:'mining'},
-  mine_entrance:{id:'mine_entrance',name:'旧鉱山入口',icon:'🕳️',zone:'mountain',x:75,y:22,desc:'奥から冷たい風が吹く。'},
-  high_pass:{id:'high_pass',name:'風切り峠',icon:'🌬️',zone:'mountain',x:63,y:15,desc:'村周辺を見渡せる高所。'},
+  mine_entrance:{id:'mine_entrance',name:'旧鉱山入口',icon:'🕳️',zone:'mountain',x:75,y:22,desc:'奥から冷たい風が吹く。',campSafety:'semi'},
+  high_pass:{id:'high_pass',name:'風切り峠',icon:'🌬️',zone:'mountain',x:63,y:15,desc:'村周辺を見渡せる高所。風よけになる岩陰がある。',campSafety:'safe'},
   hidden_cave:{id:'hidden_cave',name:'崩れかけの洞穴',icon:'🪨',zone:'mountain',x:91,y:12,desc:'危険だが珍しい鉱物が見つかることも。',resource:'mining'},
-  ruin_path:{id:'ruin_path',name:'旧参道',icon:'🛣️',zone:'ruins',x:51,y:24,desc:'森から古跡へ続く石畳。'},
+  ruin_path:{id:'ruin_path',name:'旧参道',icon:'🛣️',zone:'ruins',x:51,y:24,desc:'森から古跡へ続く石畳。',campSafety:'semi'},
   old_ruins:{id:'old_ruins',name:'風化した遺跡',icon:'🏛️',zone:'ruins',x:46,y:10,desc:'古代の欠片が眠る危険地帯。'},
   lakeside:{id:'lakeside',name:'森湖',icon:'🏞️',zone:'river',x:8,y:31,desc:'森の西端にある静かな湖。',resource:'fishing'},
   fallen_bridge:{id:'fallen_bridge',name:'崩れた橋',icon:'🌉',zone:'river',x:8,y:71,desc:'川沿いを回って村へ戻る近道の跡。'}
