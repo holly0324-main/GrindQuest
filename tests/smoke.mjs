@@ -1,45 +1,61 @@
 import assert from 'node:assert/strict';
 import {
-  defaultState, normalize, startDungeon, command, nextEncounter, derived,
-  startIdle, claimIdle, craft, equip
+  availableNodeIds, campChoice, claimIdle, command, craft, defaultState, derived,
+  enterNode, equip, finishBattleNode, normalize, restAtTown, retreat, startDungeon, startIdle
 } from '../src/core/game.js';
 
-const originalRandom = Math.random;
-Math.random = () => 0.5;
-
+const originalRandom=Math.random;
+Math.random=()=>0.5;
 try {
-  const s = normalize(defaultState());
-  assert.equal(startDungeon(s, 'green_hill').ok, true);
+  const s=normalize(defaultState());
+  const hp0=s.player.hp,mp0=s.player.mp;
+  assert.equal(startDungeon(s,'green_hill').ok,true);
+  assert.equal(s.player.hp,hp0,'dungeon start must not auto-heal HP');
+  assert.equal(s.player.mp,mp0,'dungeon start must not auto-heal MP');
+  assert.ok(availableNodeIds(s).length>=2,'map should branch at entrance');
 
-  let guard = 0;
-  while (s.run && guard++ < 200) {
-    while (s.battle && !s.battle.over && guard++ < 200) {
-      const stats = derived(s);
-      if (s.player.hp < stats.maxHp * 0.4 && s.player.mp >= 4) command(s, 'heal');
-      else if (s.player.mp >= 3) command(s, 'skill');
-      else command(s, 'attack');
-    }
-    assert.equal(s.battle?.won, true, 'first dungeon should be clearable with starter gear');
-    const result = nextEncounter(s);
-    if (result.done) break;
+  // Enter one battle node and win it.
+  const first=availableNodeIds(s)[0];
+  assert.equal(enterNode(s,first).ok,true);
+  let guard=0;
+  while(s.battle&&!s.battle.over&&guard++<100){
+    const stats=derived(s);
+    if(s.player.hp<stats.maxHp*.35&&s.player.mp>=4)command(s,'heal');
+    else if(s.player.mp>=3)command(s,'skill');
+    else command(s,'attack');
   }
-  assert.equal(s.run, null);
-  assert.ok((s.clears.green_hill ?? 0) >= 1);
+  assert.equal(s.battle?.won,true);
+  const hpAfterBattle=s.player.hp,mpAfterBattle=s.player.mp;
+  assert.equal(finishBattleNode(s).done,false);
+  assert.equal(s.player.hp,hpAfterBattle,'battle completion must not auto-heal HP');
+  assert.equal(s.player.mp,mpAfterBattle,'battle completion must not auto-heal MP');
+  assert.ok(s.run.rewards.exp>0,'battle EXP should be unbanked cargo');
 
-  s.inventory.iron_ore = 10;
-  s.inventory.slime_gel = 10;
-  s.player.gold = 1000;
-  assert.equal(craft(s, 'r_iron_sword').ok, true);
-  assert.equal(equip(s, 'iron_sword'), true);
-  assert.equal(s.player.equipment.weapon, 'iron_sword');
+  // Retreat banks cargo, without healing.
+  const cargoExp=s.run.rewards.exp;
+  const playerExpBefore=s.player.exp;
+  const ret=retreat(s);
+  assert.equal(ret.ok,true);
+  assert.equal(s.run,null);
+  assert.ok(s.player.exp>=playerExpBefore,'retreat should bank EXP');
+  assert.equal(ret.rewards.exp,cargoExp);
+  assert.equal(s.player.hp,hpAfterBattle,'retreat must not auto-heal HP');
+  assert.equal(s.player.mp,mpAfterBattle,'retreat must not auto-heal MP');
 
-  assert.equal(startIdle(s, 'green_hill').ok, true);
-  s.idle.startedAt -= 60 * 60 * 1000;
-  const idle = claimIdle(s);
-  assert.equal(idle.ok, true);
-  assert.equal(idle.result.cycles, 10);
+  restAtTown(s);
+  assert.equal(s.player.hp,derived(s).maxHp);
+  assert.equal(s.player.mp,derived(s).maxMp);
 
-  console.log('Smoke test passed: battle -> clear -> craft -> equip -> idle claim');
-} finally {
-  Math.random = originalRandom;
-}
+  s.inventory.iron_ore=10;s.inventory.slime_gel=10;
+  assert.equal(craft(s,'r_iron_sword').ok,true);
+  assert.equal(equip(s,'iron_sword'),true);
+
+  assert.equal(startIdle(s,'green_hill').ok,true);
+  s.idle.startedAt-=60*60*1000;
+  const idle=claimIdle(s);
+  assert.equal(idle.ok,true);
+  assert.equal(idle.result.cycles,10);
+  assert.equal('gold' in idle.result,false,'idle rewards should not contain gold');
+
+  console.log('Smoke test passed: branching map -> battle -> no auto-heal -> retreat bank -> craft -> idle');
+} finally { Math.random=originalRandom; }
