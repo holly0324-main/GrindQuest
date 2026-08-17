@@ -1,4 +1,4 @@
-# GrindQuest PWA v0.4
+# GrindQuest PWA v0.41
 
 スマホ縦持ち前提の「周辺フィールド探索・採集・帰路管理RPG」プロトタイプです。
 
