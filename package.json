@@ -1,9 +1,9 @@
 {
   "name": "grindquest-pwa",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/smoke.mjs"
+    "test": "node tests/smoke.mjs && node tests/route.mjs"
   }
 }

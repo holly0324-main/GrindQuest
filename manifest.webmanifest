@@ -1,7 +1,7 @@
 {
-  "name": "GrindQuest - 放置ローグライトRPG",
+  "name": "GrindQuest - フィールド探索RPG",
   "short_name": "GrindQuest",
-  "description": "コマンド戦闘・ダンジョングラインド・装備作成・放置探索をスマホで遊ぶPWA",
+  "description": "村の周辺を歩き、採集・戦闘・帰路・バッグ容量を管理するスマホ向け探索PWA",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

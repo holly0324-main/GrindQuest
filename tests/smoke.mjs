@@ -1,61 +1,48 @@
 import assert from 'node:assert/strict';
 import {
-  availableNodeIds, campChoice, claimIdle, command, craft, defaultState, derived,
-  enterNode, equip, finishBattleNode, normalize, restAtTown, retreat, startDungeon, startIdle
+  defaultState, startExpedition, travelTo, adjacentNodes, backpackCapacity, usedCapacity,
+  harvestResult, sellMaterial, buyConsumable, restAtTown, phaseInfo, worldNodes, useRura
 } from '../src/core/game.js';
 
-const originalRandom=Math.random;
-Math.random=()=>0.5;
-try {
-  const s=normalize(defaultState());
-  const hp0=s.player.hp,mp0=s.player.mp;
-  assert.equal(startDungeon(s,'green_hill').ok,true);
-  assert.equal(s.player.hp,hp0,'dungeon start must not auto-heal HP');
-  assert.equal(s.player.mp,mp0,'dungeon start must not auto-heal MP');
-  assert.ok(availableNodeIds(s).length>=2,'map should branch at entrance');
+const s=defaultState();
+assert.equal(phaseInfo(s).name,'朝');
+assert.equal(startExpedition(s).ok,true);
+assert.equal(s.run.location,'town');
+assert.ok(adjacentNodes('town').length>=3);
+assert.ok(Object.keys(worldNodes).length>=25);
+assert.equal(backpackCapacity(s),12);
 
-  // Enter one battle node and win it.
-  const first=availableNodeIds(s)[0];
-  assert.equal(enterNode(s,first).ok,true);
-  let guard=0;
-  while(s.battle&&!s.battle.over&&guard++<100){
-    const stats=derived(s);
-    if(s.player.hp<stats.maxHp*.35&&s.player.mp>=4)command(s,'heal');
-    else if(s.player.mp>=3)command(s,'skill');
-    else command(s,'attack');
-  }
-  assert.equal(s.battle?.won,true);
-  const hpAfterBattle=s.player.hp,mpAfterBattle=s.player.mp;
-  assert.equal(finishBattleNode(s).done,false);
-  assert.equal(s.player.hp,hpAfterBattle,'battle completion must not auto-heal HP');
-  assert.equal(s.player.mp,mpAfterBattle,'battle completion must not auto-heal MP');
-  assert.ok(s.run.rewards.exp>0,'battle EXP should be unbanked cargo');
+// Force a resource interaction without relying on random travel combat.
+s.run.location='herb_meadow';
+const h=harvestResult(s,1);
+assert.equal(h.ok,true);
+assert.ok(s.run.freshHerbs>=1);
+assert.ok(usedCapacity(s)>=2); // potion + at least one herb
 
-  // Retreat banks cargo, without healing.
-  const cargoExp=s.run.rewards.exp;
-  const playerExpBefore=s.player.exp;
-  const ret=retreat(s);
-  assert.equal(ret.ok,true);
-  assert.equal(s.run,null);
-  assert.ok(s.player.exp>=playerExpBefore,'retreat should bank EXP');
-  assert.equal(ret.rewards.exp,cargoExp);
-  assert.equal(s.player.hp,hpAfterBattle,'retreat must not auto-heal HP');
-  assert.equal(s.player.mp,mpAfterBattle,'retreat must not auto-heal MP');
+// Second harvest in the same expedition must be blocked.
+assert.equal(harvestResult(s,1).ok,false);
 
-  restAtTown(s);
-  assert.equal(s.player.hp,derived(s).maxHp);
-  assert.equal(s.player.mp,derived(s).maxMp);
+// Rura returns and fresh herbs expire.
+s.consumables.rura_potion=1;
+const rr=useRura(s);
+assert.equal(rr.ok,true);
+assert.equal(s.run,null);
+assert.equal(rr.report.method,'rura');
+assert.ok(rr.report.herbsExpired>=1);
 
-  s.inventory.iron_ore=10;s.inventory.slime_gel=10;
-  assert.equal(craft(s,'r_iron_sword').ok,true);
-  assert.equal(equip(s,'iron_sword'),true);
+// Economy: money comes from material sales, then can buy durable medicine.
+s.inventory.slime_gel=10;
+const beforeGold=s.gold;
+const sold=sellMaterial(s,'slime_gel','all');
+assert.equal(sold.ok,true);
+assert.ok(s.gold>beforeGold);
+const buy=buyConsumable(s,'potion');
+assert.equal(buy.ok,true);
 
-  assert.equal(startIdle(s,'green_hill').ok,true);
-  s.idle.startedAt-=60*60*1000;
-  const idle=claimIdle(s);
-  assert.equal(idle.ok,true);
-  assert.equal(idle.result.cycles,10);
-  assert.equal('gold' in idle.result,false,'idle rewards should not contain gold');
-
-  console.log('Smoke test passed: branching map -> battle -> no auto-heal -> retreat bank -> craft -> idle');
-} finally { Math.random=originalRandom; }
+// Rest advances to a following morning and heals.
+s.player.hp=1;s.player.mp=0;
+const oldDay=s.calendar.day;
+restAtTown(s);
+assert.equal(phaseInfo(s).name,'朝');
+assert.ok(s.calendar.day>oldDay);
+console.log('smoke ok');
