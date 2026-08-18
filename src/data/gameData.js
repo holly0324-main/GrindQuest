@@ -3,10 +3,10 @@ export const items = {
   iron_sword: { id:'iron_sword', name:'鉄の剣', slot:'weapon', icon:'⚔️', atk:8, def:0, hp:0, mp:0, desc:'鉄鉱石を鍛えて作った堅実な剣。' },
   fang_blade: { id:'fang_blade', name:'獣牙の剣', slot:'weapon', icon:'🦷', atk:13, def:0, hp:4, mp:0, desc:'魔獣の牙を芯材にした荒々しい剣。' },
   flame_blade: { id:'flame_blade', name:'炎晶剣', slot:'weapon', icon:'🔥', atk:18, def:0, hp:0, mp:4, desc:'炎晶石を封じた上位武器。' },
-  travel_clothes: { id:'travel_clothes', name:'旅人の服', slot:'armor', icon:'🥋', atk:0, def:2, hp:0, mp:0, desc:'動きやすさ重視の普段着。' },
-  leather_armor: { id:'leather_armor', name:'皮のよろい', slot:'armor', icon:'🛡️', atk:0, def:5, hp:6, mp:0, desc:'魔獣素材で補強した軽鎧。' },
-  chain_mail: { id:'chain_mail', name:'鎖かたびら', slot:'armor', icon:'⛓️', atk:0, def:9, hp:10, mp:0, desc:'山道にも耐える本格防具。' },
-  mystic_robe: { id:'mystic_robe', name:'魔力のローブ', slot:'armor', icon:'🪄', atk:0, def:7, hp:0, mp:10, desc:'魔結晶の力でMPを増幅する。' }
+  travel_clothes: { id:'travel_clothes', name:'旅人の服', slot:'body', icon:'🥋', atk:0, def:2, hp:0, mp:0, desc:'動きやすさ重視の普段着。' },
+  leather_armor: { id:'leather_armor', name:'皮のよろい', slot:'body', icon:'🛡️', atk:0, def:5, hp:6, mp:0, desc:'魔獣素材で補強した軽鎧。' },
+  chain_mail: { id:'chain_mail', name:'鎖かたびら', slot:'body', icon:'⛓️', atk:0, def:9, hp:10, mp:0, desc:'山道にも耐える本格防具。' },
+  mystic_robe: { id:'mystic_robe', name:'魔力のローブ', slot:'body', icon:'🪄', atk:0, def:7, hp:0, mp:10, desc:'魔結晶の力でMPを増幅する。' }
 };
 
 export const materials = {
@@ -118,7 +118,7 @@ export const randomEvents = [
   {id:'mushrooms',zones:['forest'],weight:4,text:'木の根元に森キノコがまとまって生えている。',effect:{cargo:['mushroom',1]}},
   {id:'ore_chip',zones:['mountain'],weight:4,text:'道端の岩肌に鉱脈の欠片が見えた。',effect:{cargo:['iron_ore',1]}},
   {id:'fish_jump',zones:['river'],weight:3,text:'水面で大きな魚が跳ねた。近くに魚群がいるようだ。',effect:{note:'fish'}},
-  {id:'clear_water',zones:['river','forest'],phases:['morning','day'],weight:2,text:'冷たい清水で顔を洗い、少し元気が戻った。',effect:{hp:7}},
+  {id:'clear_water',zones:['river','forest'],phases:['morning','day'],weight:2,text:'冷たい清水で顔を洗い、頭が冴えた。',effect:{exp:2}},
   {id:'quiet_breeze',zones:['outskirts','mountain'],weight:3,text:'風が抜け、しばらく周囲が静まり返った。',effect:{encounterMod:-.08,moves:2}},
   {id:'thick_fog',zones:['forest','mountain'],phases:['night'],weight:3,text:'急に霧が濃くなった。しばらく魔物に遭いやすそうだ。',effect:{encounterMod:.12,moves:2}},
   {id:'tracks',zones:['forest','mountain'],weight:3,text:'新しい獣の足跡が続いている。少し遠回りした。',effect:{steps:3}},
