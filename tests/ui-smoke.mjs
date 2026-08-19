@@ -3,7 +3,7 @@ import {defaultState,startExpedition} from '../src/core/game.js';
 import {AppUI} from '../src/ui/app.js';
 const root={innerHTML:'',querySelectorAll(){return[]},querySelector(){return null},appendChild(){}};const s=defaultState();const ui=new AppUI(root,s,async()=>{});
 ui.render();assert.match(root.innerHTML,/80G/);assert.match(root.innerHTML,/きようさ/);
-ui.tab='items';ui.itemScene='warehouse';ui.render();assert.match(root.innerHTML,/換金品を全て売る/);
+ui.tab='items';ui.itemScene='warehouse';s.itemStacks.push({stackId:'wh_gel',id:'slime_gel',count:3,quality:1,container:'storage',remainingLife:null,lastAgedStep:s.calendar.totalSteps},{stackId:'wh_herb',id:'fresh_herb',count:2,quality:2,container:'fresh_storage',remainingLife:300,lastAgedStep:s.calendar.totalSteps});ui.render();assert.match(root.innerHTML,/換金品を全て売る/);assert.match(root.innerHTML,/スライムゼリー/);assert.match(root.innerHTML,/☆1/);ui.warehouseMode='fresh';ui.render();assert.match(root.innerHTML,/生鮮倉庫/);assert.match(root.innerHTML,/薬草/);assert.match(root.innerHTML,/☆2/);ui.warehouseMode='normal';
 ui.tab='production';ui.render();assert.match(root.innerHTML,/Rank 2|R2/);
 ui.tab='equipment';ui.render();assert.match(root.innerHTML,/出来栄え/);
 startExpedition(s);ui.render();assert.match(root.innerHTML,/村へ戻る/);s.run.location='west_road';ui.render();assert.match(root.innerHTML,/足踏み/);assert.match(root.innerHTML,/map-player-marker/);

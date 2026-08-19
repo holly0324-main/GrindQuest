@@ -23,7 +23,7 @@ const h=defaultState();h.lifeSkills.gathering.level=6;h.player.stats.dexterity=2
 
 // Warehouse life uses a 1/3 aging rate and does not multiply on retrieval.
 const q=normalize({version:7,calendar:{totalSteps:0},itemStacks:[{stackId:'x',id:'fresh_herb',count:1,quality:0,container:'bag',remainingLife:300,lastAgedStep:0}],nextStackId:2});
-assert.equal(warehouseCapacity(q),200);assert.equal(transferStack(q,'x','storage').ok,true);advanceTime(q,30);let st=stackList(q,'storage','fresh_herb')[0];assert.ok(stackRemaining(st)>=289&&stackRemaining(st)<=291);assert.equal(transferStack(q,'x','bag').ok,true);st=stackList(q,'bag','fresh_herb')[0];assert.ok(stackRemaining(st)>=289&&stackRemaining(st)<=291);advanceTime(q,30);assert.ok(stackRemaining(stackList(q,'bag','fresh_herb')[0])<=261);
+assert.equal(warehouseCapacity(q),200);assert.equal(transferStack(q,'x','storage').ok,true);advanceTime(q,30);let st=stackList(q,'fresh_storage','fresh_herb')[0];assert.ok(stackRemaining(st)>=289&&stackRemaining(st)<=291);assert.equal(transferStack(q,'x','bag').ok,true);st=stackList(q,'bag','fresh_herb')[0];assert.ok(stackRemaining(st)>=289&&stackRemaining(st)<=291);advanceTime(q,30);assert.ok(stackRemaining(stackList(q,'bag','fresh_herb')[0])<=261);
 
 // Return auto-stores non-adventure; adventure stays in the bag.
 const a=normalize({version:7,itemStacks:[
