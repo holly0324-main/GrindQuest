@@ -261,9 +261,9 @@ export const recipes=[
 ];
 
 export const alchemyRecipes=[
-  {id:'a_herb_extract',material:'herb_extract',count:1,name:'薬草エキス',icon:'🧴',steps:6,cost:{fresh_herb:2},gold:8,desc:'薬草を煮出して濃縮する中間素材。'},
-  {id:'a_potion',consumable:'potion',count:1,name:'ポーション',icon:'🧪',steps:8,cost:{fresh_herb:1,mushroom:1},gold:20,desc:'薬草とキノコを煮出し、瓶詰めする。'},
-  {id:'a_potion_extract',consumable:'potion',count:1,name:'濃縮ポーション',icon:'🧪',steps:10,cost:{herb_extract:1,mushroom:1,slime_gel:1},gold:20,desc:'中間素材を使う安定寄りの調合法。'}
+  {id:'a_herb_extract',material:'herb_extract',count:1,name:'薬草エキス',icon:'🧴',steps:6,cost:{fresh_herb:2},gold:8,desc:'薬草を低温でじっくり抽出する中間素材。',process:{startTemp:34,startHeat:.48,ingredients:{fresh_herb:{idealTemp:62,tolerance:11,tempDelta:-5,idealRps:.62,stirTolerance:.36,direction:'cw',extractRate:.115,targetExtraction:.7}}}},
+  {id:'a_potion',consumable:'potion',count:1,name:'ポーション',icon:'🧪',steps:8,cost:{fresh_herb:1,mushroom:1},gold:20,desc:'薬草とキノコの抽出を揃え、安定したところで瓶詰めする。',process:{startTemp:36,startHeat:.52,ingredients:{fresh_herb:{idealTemp:64,tolerance:10,tempDelta:-5,idealRps:.68,stirTolerance:.32,direction:'cw',extractRate:.11,targetExtraction:.72},mushroom:{idealTemp:76,tolerance:9,tempDelta:-8,idealRps:.82,stirTolerance:.30,direction:'ccw',extractRate:.095,targetExtraction:.72}}}},
+  {id:'a_potion_extract',consumable:'potion',count:1,name:'濃縮ポーション',icon:'🧪',steps:10,cost:{herb_extract:1,mushroom:1,slime_gel:1},gold:20,desc:'中間素材を使う高濃度調合。過抽出しやすい。',process:{startTemp:38,startHeat:.56,ingredients:{herb_extract:{idealTemp:68,tolerance:9,tempDelta:-3,idealRps:.72,stirTolerance:.29,direction:'cw',extractRate:.12,targetExtraction:.76},mushroom:{idealTemp:78,tolerance:8,tempDelta:-8,idealRps:.84,stirTolerance:.27,direction:'ccw',extractRate:.10,targetExtraction:.75},slime_gel:{idealTemp:58,tolerance:12,tempDelta:-11,idealRps:.50,stirTolerance:.40,direction:'cw',extractRate:.085,targetExtraction:.62,stability:.06}}}}
 ];
 
 // レア度はデータ側に持たせる。未指定品は価値 / Rank から暫定付与する。

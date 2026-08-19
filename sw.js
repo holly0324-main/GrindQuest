@@ -1,7 +1,7 @@
-const CACHE = 'grindquest-shell-v10';
+const CACHE = 'grindquest-shell-v11';
 const FILES = [
   './','./index.html','./styles.css','./manifest.webmanifest',
-  './src/main.js','./src/core/game.js','./src/core/storage.js','./src/data/gameData.js','./src/ui/app.js',
+  './src/main.js','./src/core/game.js','./src/core/alchemy.js','./src/core/storage.js','./src/data/gameData.js','./src/ui/app.js',
   './assets/icons/icon-192.png','./assets/icons/icon-512.png'
 ];
 const scopeUrl = self.registration.scope;
