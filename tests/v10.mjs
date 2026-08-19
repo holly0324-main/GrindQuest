@@ -6,8 +6,8 @@ import {
 } from '../src/core/game.js';
 
 // Rarity exists on stack items and equipment.
-assert.equal(rarityOf('slime_gel'),'common');
-assert.ok(['uncommon','rare','epic'].includes(rarityOf('flame_blade')));
+assert.equal(rarityOf('slime_gel'),0);
+assert.equal(rarityOf('flame_blade'),2);
 
 // Gathering can defer the encounter until the UI has finished its result animation.
 const g=defaultState();startExpedition(g);g.run.location='quarry';

@@ -31,7 +31,6 @@ export const FRESH_STORAGE_UPGRADES=[
   {capacity:220,price:12000,name:'商会式保存庫'}
 ];
 export const WORKMANSHIP_NAMES=['並','良','上','極'];
-export const RARITY_NAMES={common:'コモン',uncommon:'アンコモン',rare:'レア',epic:'エピック'};
 export const ITEM_TAGS={adventure:'冒険用',material:'素材',valuable:'換金'};
 export const EQUIPMENT_AFFIXES={
   sturdy:{id:'sturdy',name:'丈夫な',minWorkmanship:1,stat:'hp',min:2,max:6},
@@ -46,7 +45,18 @@ const allDefs=id=>materials[id]||consumables[id];
 const isStackItem=id=>!!allDefs(id)&&id!=='camp_set';
 const qualityLabel=q=>QUALITY_NAMES[clamp(Number(q)||0,0,3)]||'';
 const tagOf=id=>allDefs(id)?.tag||'material';
-export function rarityOf(idOrDef){const d=typeof idOrDef==='string'?(items[idOrDef]||allDefs(idOrDef)):idOrDef;return d?.rarity||'common';}
+export function rarityOf(idOrDef){const d=typeof idOrDef==='string'?(items[idOrDef]||allDefs(idOrDef)):idOrDef;return Math.max(0,Number(d?.rank)||0);}
+const BOOK_ITEM_IDS=[...Object.keys(items),...Object.keys(consumables),...Object.keys(materials)];
+const BOOK_ENEMY_IDS=Object.keys(enemies);
+const bookNo=(ids,id)=>String(Math.max(0,ids.indexOf(id))+1).padStart(3,'0');
+const itemKind=d=>d?.slot?'装備':d?.tag==='adventure'?'冒険用アイテム':d?.tag==='valuable'?'換金アイテム':'素材アイテム';
+const itemEffect=d=>{if(!d)return'―';if(d.slot){const parts=[];if(d.atk)parts.push(`攻撃+${d.atk}`);if(d.def)parts.push(`守備+${d.def}`);if(d.hp)parts.push(`HP+${d.hp}`);if(d.mp)parts.push(`MP+${d.mp}`);return parts.join(' / ')||'装備品';}if(d.heal)return`HPを基本${d.heal}回復。品質が高いほど効果が上がる。`;if(d.id==='rura_potion')return'探索中、現在地から村へ直帰する。';if(d.id==='camp_set')return'セーフティエリア等でキャンプできる。';if(d.shelfLife)return`寿命 ${d.shelfLife}step（品質で延長）`;return d.tag==='valuable'?'主に売却して資金へ換える。':d.tag==='material'?'鍛冶・調合などの材料として使う。':'特別な効果はまだない。';};
+const itemFlavor=d=>d?.desc||(d?.tag==='valuable'?'商人が価値を見出す品。持ち帰ればまとまった資金になる。':d?.tag==='material'?'加工や生産に利用できる素材。地域によって採れ方が異なる。':'冒険者が携帯する道具。');
+export function itemBookEntry(state,id){const d=items[id]||allDefs(id);if(!d)return null;const sell=d.slot?Math.max(1,Math.round((d.price||50)*.45)):materials[id]?(d.value||0):null;return{id,number:bookNo(BOOK_ITEM_IDS,id),icon:d.icon||'📦',name:d.name||id,rank:rarityOf(d),kind:itemKind(d),effect:itemEffect(d),flavor:itemFlavor(d),sell,shelfLife:d.shelfLife??null,slot:d.slot||null};}
+export function itemBookEntries(state){return BOOK_ITEM_IDS.map(id=>itemBookEntry(state,id)).filter(Boolean);}
+function enemyHabitats(id){const rows=[];const labels={morning:'朝',day:'昼',night:'夜'};for(const [zid,z] of Object.entries(zones)){const phases=[];for(const [ph,pool] of Object.entries(z.pools||{}))if((pool||[]).includes(id))phases.push(labels[ph]||ph);if(phases.length)rows.push({place:z.name||zid,time:phases.join('・')});}for(const area of Object.values(localAreas)){for(const node of Object.values(area.nodes||{})){if(node.symbolEnemy===id||node.bossEnemy===id)rows.push({place:`${area.name}・${node.name}`,time:'常駐'});}}const seen=new Set();return rows.filter(r=>{const k=`${r.place}|${r.time}`;if(seen.has(k))return false;seen.add(k);return true;});}
+export function monsterBookEntry(state,id){const e=enemies[id];if(!e)return null;return{id,number:bookNo(BOOK_ENEMY_IDS,id),icon:e.icon,name:e.name,kills:Math.max(0,Number(state?.encyclopedia?.kills?.[id])||0),flavor:e.flavor||'',habitats:enemyHabitats(id),slots:(e.slots||[]).map(([count,p])=>({count,p})),drops:(e.loot||[]).map(x=>({id:x.id,name:allDefs(x.id)?.name||x.id,icon:allDefs(x.id)?.icon||'📦',weight:x.w,min:x.min||1,max:x.max||x.min||1,rank:rarityOf(x.id)})),stats:{hp:e.hp,atk:e.atk,def:e.def,agi:e.agi,exp:e.exp}};}
+export function monsterBookEntries(state){return BOOK_ENEMY_IDS.map(id=>monsterBookEntry(state,id)).filter(Boolean);}
 const tagPriority={adventure:0,material:1,valuable:2};
 
 function starterGear(){return[
@@ -56,7 +66,7 @@ function starterGear(){return[
   {gearId:'gear_4',baseId:'travel_boots',workmanship:0,affixes:[]}
 ];}
 export function defaultState(){return{
-  version:11,
+  version:13,
   player:{
     name:'冒険者',level:1,exp:0,
     stats:{vitality:46,strength:8,agility:8,magic:8,wisdom:8,knowledge:6,dexterity:7},
@@ -69,7 +79,7 @@ export function defaultState(){return{
   warehouseLevel:0,freshWarehouseLevel:0,
   lifeSkills:{gathering:{level:1,xp:0},mining:{level:1,xp:0},fishing:{level:1,xp:0},woodcut:{level:1,xp:0}},
   calendar:{day:1,stepOfDay:0,totalSteps:0},condition:{awakeSteps:0,fatigueStacks:0},
-  timedProcesses:[],worldState:{bossDefeatedAt:{}},run:null,battle:null,idle:null,
+  timedProcesses:[],worldState:{bossDefeatedAt:{}},encyclopedia:{kills:{}},run:null,battle:null,idle:null,
   log:['ミナト村での暮らしがはじまった。'],settings:{vibrate:true}
 };}
 
@@ -117,12 +127,12 @@ function migrateGear(s,old){
 function mapLegacyEquipment(s,old){if(Array.isArray(old.gear)&&old.gear.length)return{...s.player.equipment,...(old.player?.equipment||{})};const eq=old.player?.equipment||{},out={weapon:null,shield:null,head:null,body:null,arms:null,legs:null,feet:null,accessory:null};if(eq.armor&&!eq.body)eq.body=eq.armor;for(const slot of Object.keys(out)){const baseId=eq[slot];if(!baseId)continue;const g=s.gear.find(x=>x.baseId===baseId&&!Object.values(out).includes(x.gearId));if(g)out[slot]=g.gearId;}return out;}
 
 export function normalize(state){
-  const base=defaultState(),old=state||{},s={...base,...old,version:11};
+  const base=defaultState(),old=state||{},s={...base,...old,version:13};
   s.calendar={...base.calendar,...(old.calendar||{})};if(!Number.isFinite(s.calendar.totalSteps))s.calendar.totalSteps=Math.max(0,(Math.max(1,s.calendar.day||1)-1)*DAY_STEPS+(s.calendar.stepOfDay||0));s.calendar.day=Math.floor(s.calendar.totalSteps/DAY_STEPS)+1;s.calendar.stepOfDay=s.calendar.totalSteps%DAY_STEPS;
   s.player={...base.player,...(old.player||{}),stats:{...base.player.stats,...legacyStats(old)}};
   s.gold=Number.isFinite(old.gold)?old.gold:(old.player?.gold||base.gold);s.backpack=backpacks[old.backpack]?old.backpack:'cheap';s.consumables={camp_set:Math.max(0,Number(old.consumables?.camp_set)||0)};
   s.nextGearId=Math.max(1,Number(old.nextGearId)||1);migrateGear(s,old);s.player.equipment=mapLegacyEquipment(s,old);
-  s.condition={...base.condition,...(old.condition||{})};s.settings={...base.settings,...(old.settings||{})};s.timedProcesses=Array.isArray(old.timedProcesses)?old.timedProcesses.map(x=>({...x})) : [];s.worldState={bossDefeatedAt:{...(old.worldState?.bossDefeatedAt||{})}};
+  s.condition={...base.condition,...(old.condition||{})};s.settings={...base.settings,...(old.settings||{})};s.timedProcesses=Array.isArray(old.timedProcesses)?old.timedProcesses.map(x=>({...x})) : [];s.worldState={bossDefeatedAt:{...(old.worldState?.bossDefeatedAt||{})}};s.encyclopedia={kills:{...(old.encyclopedia?.kills||{})}};
   s.lifeSkills=deep(base.lifeSkills);for(const [k,v] of Object.entries(old.lifeSkills||{}))if(s.lifeSkills[k])s.lifeSkills[k]={...s.lifeSkills[k],...v};
   s.warehouseLevel=clamp(Number(old.warehouseLevel)||0,0,STORAGE_UPGRADES.length-1);s.freshWarehouseLevel=clamp(Number(old.freshWarehouseLevel)||0,0,FRESH_STORAGE_UPGRADES.length-1);s.nextStackId=Math.max(1,Number(old.nextStackId)||1);s.itemStacks=[];migrateLegacyStacks(s,old);consolidatePermanentStacks(s);
   if(old.run){s.run={location:'town',harvested:[],visited:['town'],lastEvent:null,moves:0,effects:{encounterMod:0,moves:0},startedAtStep:s.calendar.totalSteps,patrols:0,area:null,resourceUses:{},defeatedSymbols:[],...old.run};s.run.resourceUses={...(old.run.resourceUses||{})};s.run.defeatedSymbols=Array.isArray(old.run.defeatedSymbols)?[...old.run.defeatedSymbols]:[];if(old.run.area?.areaId&&localAreas[old.run.area.areaId]){const ar=localAreas[old.run.area.areaId],nodeId=ar.nodes[old.run.area.nodeId]?old.run.area.nodeId:ar.entry;s.run.area={areaId:ar.id,nodeId,visited:Array.isArray(old.run.area.visited)?old.run.area.visited:[nodeId]};}else s.run.area=null;delete s.run.cargo;delete s.run.freshHerbs;delete s.run.pendingExp;}else s.run=null;
@@ -211,7 +221,7 @@ function enemyTurn(state){const b=state.battle,e=enemies[b.enemyId],st=derived(s
 function rollSlots(e){let r=Math.random(),acc=0;for(const[n,p]of e.slots||[[1,1]]){acc+=p;if(r<=acc)return n;}return(e.slots||[[1,1]]).at(-1)[0];}
 function rollLoot(e){const total=(e.loot||[]).reduce((a,x)=>a+x.w,0);let r=Math.random()*total;for(const x of e.loot||[]){r-=x.w;if(r<=0)return{id:x.id,count:rand(x.min||1,x.max||x.min||1)};}return null;}
 function dropQuality(e,id){const def=allDefs(id),base=e.exp>=70?.65:e.exp>=35?.36:.16;let q=Math.random()<base?1:0;if(Math.random()<.07)q++;if(Math.random()<.018)q++;if(def?.tag==='valuable')q=Math.min(q,2);return clamp(q,0,3);}
-function victory(state){const b=state.battle,e=enemies[b.enemyId];b.over=true;b.won=true;if(b.symbolKey){if(b.bossSymbol){state.worldState=state.worldState||{bossDefeatedAt:{}};state.worldState.bossDefeatedAt=state.worldState.bossDefeatedAt||{};state.worldState.bossDefeatedAt[b.symbolKey]=state.calendar.totalSteps;}else if(state.run&&!state.run.defeatedSymbols.includes(b.symbolKey))state.run.defeatedSymbols.push(b.symbolKey);}const xp=addExp(state,b.expReward,'戦闘'),drops=[],lost=[];for(let i=0;i<rollSlots(e);i++){const d=rollLoot(e);if(!d)continue;const q=dropQuality(e,d.id),a=addStack(state,d.id,d.count,{quality:q,container:'bag'});if(a)drops.push(`${allDefs(d.id).name}${qualityLabel(q)}×${a}`);if(a<d.count)lost.push(`${allDefs(d.id).name}×${d.count-a}`);}pushBattle(b,`${e.name}を たおした！ ${xp.msg}`);if(drops.length)pushBattle(b,`戦利品: ${drops.join(' / ')}`);if(lost.length)pushBattle(b,`バッグに入らず置いてきた: ${lost.join(' / ')}`);return{xp,drops,lost};}
+function victory(state){const b=state.battle,e=enemies[b.enemyId];b.over=true;b.won=true;state.encyclopedia=state.encyclopedia||{kills:{}};state.encyclopedia.kills=state.encyclopedia.kills||{};state.encyclopedia.kills[e.id]=(state.encyclopedia.kills[e.id]||0)+1;if(b.symbolKey){if(b.bossSymbol){state.worldState=state.worldState||{bossDefeatedAt:{}};state.worldState.bossDefeatedAt=state.worldState.bossDefeatedAt||{};state.worldState.bossDefeatedAt[b.symbolKey]=state.calendar.totalSteps;}else if(state.run&&!state.run.defeatedSymbols.includes(b.symbolKey))state.run.defeatedSymbols.push(b.symbolKey);}const xp=addExp(state,b.expReward,'戦闘'),drops=[],lost=[];for(let i=0;i<rollSlots(e);i++){const d=rollLoot(e);if(!d)continue;const q=dropQuality(e,d.id),a=addStack(state,d.id,d.count,{quality:q,container:'bag'});if(a)drops.push(`${allDefs(d.id).name}${qualityLabel(q)}×${a}`);if(a<d.count)lost.push(`${allDefs(d.id).name}×${d.count-a}`);}pushBattle(b,`${e.name}を たおした！ ${xp.msg}`);if(drops.length)pushBattle(b,`戦利品: ${drops.join(' / ')}`);if(lost.length)pushBattle(b,`バッグに入らず置いてきた: ${lost.join(' / ')}`);return{xp,drops,lost};}
 export function command(state,type,payload={}){const b=state.battle;if(!b||b.over)return{ok:false};const e=enemies[b.enemyId],st=derived(state);if(type==='escape'){b.escapeAttempts=(b.escapeAttempts||0)+1;const chance=Math.min(1,b.escapeAttempts/3),success=Math.random()<chance;pushBattle(b,`逃げ道を探した！ 成功率 ${Math.round(chance*100)}%。`);let playerDamage=0;if(success){b.over=true;b.escaped=true;pushBattle(b,'うまく逃げ切った！');}else{pushBattle(b,'しかし回り込まれた！');playerDamage=enemyTurn(state);}finishBattleTurn(state,b);return{ok:true,action:'escape',escaped:success,playerDamage,escapeChance:chance,order:'escape'};}
   const pInit=st.agility+rand(-3,3),eInit=(e.agi||8)+rand(-3,3),enemyFirst=eInit>pInit;let playerDamage=0,enemyDamage=0,heal=0,action=type,victoryInfo=null,acted=false;
   if(enemyFirst){pushBattle(b,`${e.name}が先に動いた！`);playerDamage=enemyTurn(state);if(!b.over){const r=playerAction(state,b,type,payload,st,e);if(!r.valid)return{ok:false};({enemyDamage,heal,action}=r);acted=true;if(b.enemyHp<=0)victoryInfo=victory(state);}}

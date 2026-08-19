@@ -1,4 +1,4 @@
-const CACHE = 'grindquest-shell-v12';
+const CACHE = 'grindquest-shell-v13';
 const FILES = [
   './','./index.html','./styles.css','./manifest.webmanifest',
   './src/main.js','./src/core/game.js','./src/core/alchemy.js','./src/core/storage.js','./src/data/gameData.js','./src/ui/app.js',
