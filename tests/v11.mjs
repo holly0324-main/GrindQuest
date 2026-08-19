@@ -18,5 +18,5 @@ const c=defaultState();c.gold=999;add(c,'fresh_herb',1,'fresh_storage',1,500);ad
 
 // 釜シミュレータ: 器用さは許容幅、素材投入・火力・攪拌・Effect拡張を持つ。
 const recipe=alchemyRecipes.find(x=>x.id==='a_potion');const low=createAlchemySession(recipe,5,null,performance.now()),high=createAlchemySession(recipe,60,null,performance.now());assert.ok(alchemyIngredientInfo(high,'fresh_herb').maxTemp-alchemyIngredientInfo(high,'fresh_herb').minTemp > alchemyIngredientInfo(low,'fresh_herb').maxTemp-alchemyIngredientInfo(low,'fresh_herb').minTemp);
-const s=createAlchemySession(recipe,20,null,performance.now());setAlchemyHeat(s,.7);const temp=s.temperature;addAlchemyIngredient(s,'fresh_herb',performance.now());assert.ok(s.temperature<temp);applyAlchemyStir(s,{deltaAngle:.45,dtMs:50,radiusError:.03});assert.equal(s.stir.direction,'cw');assert.ok(s.stir.rps>0);assert.equal(applyAlchemyEffect(s,{type:ALCHEMY_EFFECT_TYPES.STABILIZE,amount:.05}),true);assert.ok(evaluateAlchemy(s).score>=0);
-console.log('v0.11 ok');
+const t0=performance.now();const s=createAlchemySession(recipe,20,null,t0);setAlchemyHeat(s,0);const temp=s.temperature;addAlchemyIngredient(s,'fresh_herb',t0);assert.equal(s.temperature,temp);assert.equal(s.thermalEffects[0].rateCPerSec,-1);assert.equal(s.thermalEffects[0].remainingMs,3000);applyAlchemyStir(s,{deltaAngle:.45,dtMs:50,radiusError:.03});assert.equal(s.stir.direction,'cw');assert.ok(s.stir.rps>0);assert.equal(applyAlchemyEffect(s,{type:ALCHEMY_EFFECT_TYPES.STABILIZE,amount:.05}),true);assert.ok(evaluateAlchemy(s).score>=0);
+console.log('v0.11 compatibility ok');

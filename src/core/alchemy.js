@@ -2,8 +2,10 @@ const clamp=(v,min=0,max=1)=>Math.max(min,Math.min(max,v));
 const nowMs=()=>typeof performance!=='undefined'&&performance.now?performance.now():Date.now();
 
 const DEFAULT_PROFILE={
-  idealTemp:68,tolerance:10,tempDelta:-4,idealRps:.72,stirTolerance:.34,direction:'cw',extractRate:.10,stability:0
+  idealTemp:68,tolerance:10,tempRateCPerSec:-1,tempRateDurationMs:3000,
+  idealRps:.72,stirTolerance:.34,direction:'cw',extractRate:.10,stability:0
 };
+const FAILURE_THRESHOLD=.30;
 
 export const ALCHEMY_EFFECT_TYPES={
   HEAT_HOLD:'heat_hold',
@@ -40,11 +42,12 @@ export function createAlchemySession(recipe,dexterity=0,reservation=null,started
     toleranceMul:dexterityWidth(dexterity),
     pending,
     added:[],profiles,
+    thermalEffects:[],
     stir:{rps:0,direction:'none',totalTurns:0,pathScore:1,speedScore:0,directionScore:0,samples:0},
     metrics:{tempIntegral:0,tempWeight:0,stirIntegral:0,stirWeight:0,idleMs:0,maxTemp:0},
     effects:[],
     reservation,
-    ready:false,ruined:false
+    ready:false,ruined:false,allAdded:false
   };
 }
 
@@ -59,9 +62,13 @@ export function addAlchemyIngredient(session,id,at=nowMs()){
   advanceAlchemySession(session,at);
   const p=session.profiles[id]||DEFAULT_PROFILE;
   session.pending[id]--;
-  session.temperature=Math.max(session.ambientTemp,session.temperature+(p.tempDelta||0));
   session.stability=clamp(session.stability+(p.stability||0),0,1);
   session.added.push({id,at:session.elapsedMs,profile:p,extraction:0});
+  const rate=Number.isFinite(p.tempRateCPerSec)?p.tempRateCPerSec:(Number.isFinite(p.tempDelta)?p.tempDelta/3:0);
+  const durationMs=Math.max(0,p.tempRateDurationMs??3000);
+  if(rate&&durationMs)session.thermalEffects.push({source:id,rateCPerSec:rate,remainingMs:durationMs});
+  session.allAdded=Object.values(session.pending).every(n=>n<=0);
+  session.ready=session.allAdded;
   return{ok:true,msg:`${id}を投入した。`};
 }
 
@@ -91,6 +98,14 @@ function tickEffects(session,dtMs){
   session.effects=(session.effects||[]).filter(e=>e.remainingMs>0);
 }
 
+function tickThermalEffects(session,dtSec,dtMs){
+  let deltaRate=0;
+  for(const e of session.thermalEffects||[])if(e.remainingMs>0)deltaRate+=e.rateCPerSec||0;
+  session.temperature+=deltaRate*dtSec;
+  for(const e of session.thermalEffects||[])e.remainingMs=Math.max(0,e.remainingMs-dtMs);
+  session.thermalEffects=(session.thermalEffects||[]).filter(e=>e.remainingMs>0);
+}
+
 export function applyAlchemyEffect(session,effect){
   if(!session||!effect?.type)return false;
   const e={...effect,remainingMs:effect.durationMs??3000};
@@ -115,6 +130,8 @@ function stepSession(session,dtSec,dtMs){
   const heating=session.heat*13.5*hold;
   const cooling=Math.max(0,session.temperature-session.ambientTemp)*.033;
   session.temperature+=((heating-cooling)*dtSec);
+  tickThermalEffects(session,dtSec,dtMs);
+  session.temperature=Math.max(session.ambientTemp-8,session.temperature);
   session.metrics.maxTemp=Math.max(session.metrics.maxTemp,session.temperature);
 
   if(nowMs()-session.lastStirAt>240){session.stir.rps*=Math.pow(.34,dtSec);if(session.stir.rps<.035)session.stir.direction='none';}
@@ -123,7 +140,8 @@ function stepSession(session,dtSec,dtMs){
   for(const item of session.added){
     const s=scoreIngredient(session,item),boost=effectMul(session,ALCHEMY_EFFECT_TYPES.EXTRACT_BOOST,1);
     const efficiency=s.tempScore*(.20+.80*s.stirScore);
-    const gain=(item.profile.extractRate||.1)*(.20+.80*efficiency)*boost*dtSec;
+    // v0.12: 少ない回転でも抽出が進むよう基礎抽出量を約2.4倍に。
+    const gain=(item.profile.extractRate||.1)*2.4*(.28+.72*efficiency)*boost*dtSec;
     item.extraction+=gain;
     session.extraction+=gain;
     tempAvg+=s.tempScore;stirAvg+=s.stirScore;weight++;
@@ -141,9 +159,9 @@ function stepSession(session,dtSec,dtMs){
   session.stability=clamp(session.stability,0,1);
   session.degradation=clamp(session.degradation,0,1.5);
 
-  const allAdded=Object.values(session.pending).every(n=>n<=0);
-  const target=session.added.reduce((n,x)=>n+(x.profile.targetExtraction??.72),0)||.72;
-  session.ready=allAdded&&session.extraction>=target&&session.stability>.14;
+  session.allAdded=Object.values(session.pending).every(n=>n<=0);
+  // 完成可否は内部抽出値ではなく「全素材投入済み」のみで決める。
+  session.ready=session.allAdded;
   session.ruined=session.stability<=.03||session.degradation>=1.15;
 }
 
@@ -175,14 +193,21 @@ export function alchemyStatus(session){
     elapsedMs:session.elapsedMs,
     ready:session.ready,
     ruined:session.ruined,
+    allAdded:session.allAdded,
+    thermalEffects:(session.thermalEffects||[]).map(x=>({...x})),
     pending:{...session.pending}
   };
 }
 
 export function evaluateAlchemy(session){
-  const s=alchemyStatus(session),extractScore=clamp(1-Math.abs(s.extraction-.98)/.55,0,1);
+  const s=alchemyStatus(session),extractScore=clamp(1-Math.abs(s.extraction-.92)/.62,0,1);
   const stabilityScore=clamp(s.stability,0,1),tempScore=clamp(s.tempScore,0,1),stirScore=clamp(s.stirScore,0,1),path=clamp(s.pathScore,0,1);
   const score=clamp(extractScore*.34+stabilityScore*.26+tempScore*.17+stirScore*.15+path*.08-s.degradation*.34,0,1);
-  const quality=score>=.86?3:score>=.68?2:score>=.48?1:0;
-  return{...s,score,quality,extractScore,stabilityScore};
+  const processReady=s.extraction>=.16&&s.stability>.08&&s.degradation<1.12;
+  const viable=s.allAdded&&processReady&&score>=FAILURE_THRESHOLD&&!s.ruined;
+  const quality=!viable?null:score>=.87?3:score>=.70?2:score>=.50?1:0;
+  const visualState=!s.allAdded?'incomplete':!viable?'bad':quality>=3?'excellent':quality>=2?'great':quality>=1?'good':'viable';
+  return{...s,score,quality,viable,processReady,visualState,extractScore,stabilityScore};
 }
+
+export const ALCHEMY_FAILURE_THRESHOLD=FAILURE_THRESHOLD;

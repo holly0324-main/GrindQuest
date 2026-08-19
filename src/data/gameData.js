@@ -71,13 +71,15 @@ export const materials = {
   treated_leather:{id:'treated_leather',name:'なめし革',icon:'🟫',tag:'material',value:38,bulk:1,desc:'獣毛や皮を加工した扱いやすい革材。'},
   reinforced_lumber:{id:'reinforced_lumber',name:'強化木材',icon:'🪵',tag:'material',value:42,bulk:2,desc:'樹脂で締めた鍛冶・工作用の木材。'},
   crystal_powder:{id:'crystal_powder',name:'晶石の粉',icon:'✨',tag:'material',value:72,bulk:1,desc:'魔結晶を細かく砕いて選別した中間素材。'},
-  herb_extract:{id:'herb_extract',name:'薬草エキス',icon:'🧴',tag:'material',value:28,bulk:1,shelfLife:900,desc:'薬草を煮出した調合用中間素材。品質で寿命が伸びる。'}
+  herb_extract:{id:'herb_extract',name:'薬草エキス',icon:'🧴',tag:'material',value:28,bulk:1,shelfLife:900,desc:'薬草を煮出した調合用中間素材。品質で寿命が伸びる。'},
+  alchemy_sludge:{id:'alchemy_sludge',name:'濁った薬液',icon:'🫗',tag:'material',rarity:'common',value:1,bulk:1,shelfLife:240,desc:'調合に失敗してできた不安定な薬液。今のところ用途はほぼない。'}
 };
 
 export const consumables = {
   potion:{id:'potion',name:'ポーション',icon:'🧪',tag:'adventure',rarity:'uncommon',price:60,bulk:1,shelfLife:1200,heal:45,qualityItem:true,consumable:true,desc:'保存が利く回復薬。品質で回復量と寿命が伸びる。'},
   rura_potion:{id:'rura_potion',name:'ルーラのポーション',icon:'🌀',tag:'adventure',rarity:'rare',price:180,bulk:1,shelfLife:2400,qualityItem:true,desc:'探索中どこからでも村へ直帰する。'},
-  camp_set:{id:'camp_set',name:'キャンプセット',icon:'⛺',tag:'adventure',rarity:'uncommon',price:260,bulk:5,max:1,reusable:true,desc:'重い野営道具。安全な場所で休める。'}
+  camp_set:{id:'camp_set',name:'キャンプセット',icon:'⛺',tag:'adventure',rarity:'uncommon',price:260,bulk:5,max:1,reusable:true,desc:'重い野営道具。安全な場所で休める。'},
+  failed_potion:{id:'failed_potion',name:'失敗ポーション',icon:'🧫',tag:'adventure',rarity:'common',price:4,shop:false,bulk:1,shelfLife:240,heal:6,qualityItem:true,consumable:true,desc:'調合を早く切り上げすぎたり、釜を荒らしたときにできる濁った薬。ほんの少しだけ回復する。'}
 };
 
 export const battleSkills = {
@@ -261,9 +263,9 @@ export const recipes=[
 ];
 
 export const alchemyRecipes=[
-  {id:'a_herb_extract',material:'herb_extract',count:1,name:'薬草エキス',icon:'🧴',steps:6,cost:{fresh_herb:2},gold:8,desc:'薬草を低温でじっくり抽出する中間素材。',process:{startTemp:34,startHeat:.48,ingredients:{fresh_herb:{idealTemp:62,tolerance:11,tempDelta:-5,idealRps:.62,stirTolerance:.36,direction:'cw',extractRate:.115,targetExtraction:.7}}}},
-  {id:'a_potion',consumable:'potion',count:1,name:'ポーション',icon:'🧪',steps:8,cost:{fresh_herb:1,mushroom:1},gold:20,desc:'薬草とキノコの抽出を揃え、安定したところで瓶詰めする。',process:{startTemp:36,startHeat:.52,ingredients:{fresh_herb:{idealTemp:64,tolerance:10,tempDelta:-5,idealRps:.68,stirTolerance:.32,direction:'cw',extractRate:.11,targetExtraction:.72},mushroom:{idealTemp:76,tolerance:9,tempDelta:-8,idealRps:.82,stirTolerance:.30,direction:'ccw',extractRate:.095,targetExtraction:.72}}}},
-  {id:'a_potion_extract',consumable:'potion',count:1,name:'濃縮ポーション',icon:'🧪',steps:10,cost:{herb_extract:1,mushroom:1,slime_gel:1},gold:20,desc:'中間素材を使う高濃度調合。過抽出しやすい。',process:{startTemp:38,startHeat:.56,ingredients:{herb_extract:{idealTemp:68,tolerance:9,tempDelta:-3,idealRps:.72,stirTolerance:.29,direction:'cw',extractRate:.12,targetExtraction:.76},mushroom:{idealTemp:78,tolerance:8,tempDelta:-8,idealRps:.84,stirTolerance:.27,direction:'ccw',extractRate:.10,targetExtraction:.75},slime_gel:{idealTemp:58,tolerance:12,tempDelta:-11,idealRps:.50,stirTolerance:.40,direction:'cw',extractRate:.085,targetExtraction:.62,stability:.06}}}}
+  {id:'a_herb_extract',material:'herb_extract',count:1,name:'薬草エキス',icon:'🧴',steps:6,cost:{fresh_herb:2},gold:8,desc:'薬草を低温でじっくり抽出する中間素材。',process:{startTemp:34,startHeat:.48,ingredients:{fresh_herb:{idealTemp:62,tolerance:11,tempRateCPerSec:-1,tempRateDurationMs:3000,idealRps:.62,stirTolerance:.36,direction:'cw',extractRate:.115,targetExtraction:.52}}}},
+  {id:'a_potion',consumable:'potion',count:1,name:'ポーション',icon:'🧪',steps:8,cost:{fresh_herb:1,mushroom:1},gold:20,desc:'薬草とキノコの抽出を揃え、安定したところで瓶詰めする。',process:{startTemp:36,startHeat:.52,ingredients:{fresh_herb:{idealTemp:64,tolerance:10,tempRateCPerSec:-1,tempRateDurationMs:3000,idealRps:.68,stirTolerance:.32,direction:'cw',extractRate:.11,targetExtraction:.54},mushroom:{idealTemp:76,tolerance:9,tempRateCPerSec:-1.6,tempRateDurationMs:4000,idealRps:.82,stirTolerance:.30,direction:'ccw',extractRate:.095,targetExtraction:.54}}}},
+  {id:'a_potion_extract',consumable:'potion',count:1,name:'濃縮ポーション',icon:'🧪',steps:10,cost:{herb_extract:1,mushroom:1,slime_gel:1},gold:20,desc:'中間素材を使う高濃度調合。過抽出しやすい。',process:{startTemp:38,startHeat:.56,ingredients:{herb_extract:{idealTemp:68,tolerance:9,tempRateCPerSec:-.7,tempRateDurationMs:4000,idealRps:.72,stirTolerance:.29,direction:'cw',extractRate:.12,targetExtraction:.58},mushroom:{idealTemp:78,tolerance:8,tempRateCPerSec:-1.6,tempRateDurationMs:4000,idealRps:.84,stirTolerance:.27,direction:'ccw',extractRate:.10,targetExtraction:.57},slime_gel:{idealTemp:58,tolerance:12,tempRateCPerSec:-2.2,tempRateDurationMs:5000,idealRps:.50,stirTolerance:.40,direction:'cw',extractRate:.085,targetExtraction:.48,stability:.06}}}}
 ];
 
 // レア度はデータ側に持たせる。未指定品は価値 / Rank から暫定付与する。
