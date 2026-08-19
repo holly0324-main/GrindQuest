@@ -66,13 +66,18 @@ export const materials = {
   hornet_shell:{id:'hornet_shell',name:'大蜂の甲殻',icon:'🐝',tag:'material',value:13,bulk:1},
   honey_drop:{id:'honey_drop',name:'濃い蜂蜜',icon:'🍯',tag:'adventure',value:18,bulk:1,shelfLife:900,consumable:true,heal:16,desc:'少量だがそのまま食べられる。'},
   moth_powder:{id:'moth_powder',name:'洞蛾の燐粉',icon:'🦋',tag:'material',value:25,bulk:1},
-  moon_scale:{id:'moon_scale',name:'月鱗',icon:'🌙',tag:'valuable',value:170,bulk:1}
+  moon_scale:{id:'moon_scale',name:'月鱗',icon:'🌙',tag:'valuable',value:170,bulk:1},
+  iron_ingot:{id:'iron_ingot',name:'鉄のインゴット',icon:'▰',tag:'material',value:46,bulk:2,desc:'鉄鉱石を精錬した鍛冶用の中間素材。'},
+  treated_leather:{id:'treated_leather',name:'なめし革',icon:'🟫',tag:'material',value:38,bulk:1,desc:'獣毛や皮を加工した扱いやすい革材。'},
+  reinforced_lumber:{id:'reinforced_lumber',name:'強化木材',icon:'🪵',tag:'material',value:42,bulk:2,desc:'樹脂で締めた鍛冶・工作用の木材。'},
+  crystal_powder:{id:'crystal_powder',name:'晶石の粉',icon:'✨',tag:'material',value:72,bulk:1,desc:'魔結晶を細かく砕いて選別した中間素材。'},
+  herb_extract:{id:'herb_extract',name:'薬草エキス',icon:'🧴',tag:'material',value:28,bulk:1,shelfLife:900,desc:'薬草を煮出した調合用中間素材。品質で寿命が伸びる。'}
 };
 
 export const consumables = {
-  potion:{id:'potion',name:'ポーション',icon:'🧪',tag:'adventure',price:60,bulk:1,shelfLife:1200,heal:45,qualityItem:true,consumable:true,desc:'保存が利く回復薬。品質で回復量と寿命が伸びる。'},
-  rura_potion:{id:'rura_potion',name:'ルーラのポーション',icon:'🌀',tag:'adventure',price:180,bulk:1,shelfLife:2400,qualityItem:true,desc:'探索中どこからでも村へ直帰する。'},
-  camp_set:{id:'camp_set',name:'キャンプセット',icon:'⛺',tag:'adventure',price:260,bulk:5,max:1,reusable:true,desc:'重い野営道具。安全な場所で休める。'}
+  potion:{id:'potion',name:'ポーション',icon:'🧪',tag:'adventure',rarity:'uncommon',price:60,bulk:1,shelfLife:1200,heal:45,qualityItem:true,consumable:true,desc:'保存が利く回復薬。品質で回復量と寿命が伸びる。'},
+  rura_potion:{id:'rura_potion',name:'ルーラのポーション',icon:'🌀',tag:'adventure',rarity:'rare',price:180,bulk:1,shelfLife:2400,qualityItem:true,desc:'探索中どこからでも村へ直帰する。'},
+  camp_set:{id:'camp_set',name:'キャンプセット',icon:'⛺',tag:'adventure',rarity:'uncommon',price:260,bulk:5,max:1,reusable:true,desc:'重い野営道具。安全な場所で休める。'}
 };
 
 export const battleSkills = {
@@ -225,29 +230,48 @@ export const localAreas={
 };
 
 export const recipes=[
+  // 中間素材
+  {id:'m_iron_ingot',material:'iron_ingot',count:1,category:'material',cost:{iron_ore:3}},
+  {id:'m_treated_leather',material:'treated_leather',count:1,category:'material',cost:{rabbit_fur:3,slime_gel:1}},
+  {id:'m_reinforced_lumber',material:'reinforced_lumber',count:1,category:'material',cost:{hardwood:2,slime_gel:1}},
+  {id:'m_crystal_powder',material:'crystal_powder',count:1,category:'material',cost:{magic_crystal:2,hard_stone:1}},
+
   {id:'r_hunting_knife',item:'hunting_knife',cost:{iron_ore:2,softwood:1}},
   {id:'r_iron_sword',item:'iron_sword',cost:{iron_ore:4,slime_gel:2}},
   {id:'r_iron_spear',item:'iron_spear',cost:{iron_ore:4,hardwood:2}},
-  {id:'r_fang',item:'fang_blade',cost:{iron_ore:4,beast_fang:4,wolf_claw:2}},
-  {id:'r_oak_staff',item:'oak_staff',cost:{hardwood:4,magic_crystal:1,spore_sac:2}},
-  {id:'r_mountain_axe',item:'mountain_axe',cost:{iron_ore:8,hardwood:3,boar_tusk:1}},
-  {id:'r_crystal_sword',item:'crystal_sword',cost:{iron_ore:7,magic_crystal:4,lizard_scale:3}},
-  {id:'r_flame',item:'flame_blade',cost:{flame_crystal:3,magic_crystal:5,iron_ore:8}},
-  {id:'r_leather',item:'leather_armor',cost:{rabbit_fur:5,beast_fang:2,slime_gel:2}},
-  {id:'r_chain',item:'chain_mail',cost:{iron_ore:8,goblin_cloth:3}},
-  {id:'r_scale_mail',item:'scale_mail',cost:{lizard_scale:8,iron_ore:5,boar_hide:2}},
-  {id:'r_robe',item:'mystic_robe',cost:{magic_crystal:4,cursed_cloth:4,spore_sac:2}},
-  {id:'r_iron_shield',item:'iron_shield',cost:{iron_ore:5,softwood:2}},
-  {id:'r_bone_shield',item:'bone_shield',cost:{bone:6,hardwood:2,slime_gel:2}},
-  {id:'r_fur_cap',item:'fur_cap',cost:{rabbit_fur:4,wolf_pelt:1}},
-  {id:'r_iron_helm',item:'iron_helm',cost:{iron_ore:6,lizard_scale:2}},
-  {id:'r_leather_gloves',item:'leather_gloves',cost:{rabbit_fur:3,goblin_cloth:2}},
-  {id:'r_iron_gauntlets',item:'iron_gauntlets',cost:{iron_ore:5,lizard_scale:2}},
-  {id:'r_wolf_pants',item:'wolf_pants',cost:{wolf_pelt:3,goblin_cloth:2}},
-  {id:'r_mountain_boots',item:'mountain_boots',cost:{boar_hide:2,iron_ore:2,wolf_pelt:1}},
+  {id:'r_fang',item:'fang_blade',cost:{iron_ingot:1,beast_fang:4,wolf_claw:2}},
+  {id:'r_oak_staff',item:'oak_staff',cost:{reinforced_lumber:2,magic_crystal:1,spore_sac:2}},
+  {id:'r_mountain_axe',item:'mountain_axe',cost:{iron_ingot:2,reinforced_lumber:1,boar_tusk:1}},
+  {id:'r_crystal_sword',item:'crystal_sword',cost:{iron_ingot:2,crystal_powder:2,lizard_scale:3}},
+  {id:'r_flame',item:'flame_blade',cost:{flame_crystal:3,crystal_powder:2,iron_ingot:2}},
+  {id:'r_leather',item:'leather_armor',cost:{treated_leather:2,beast_fang:2}},
+  {id:'r_chain',item:'chain_mail',cost:{iron_ingot:3,goblin_cloth:3}},
+  {id:'r_scale_mail',item:'scale_mail',cost:{lizard_scale:8,iron_ingot:2,boar_hide:2}},
+  {id:'r_robe',item:'mystic_robe',cost:{crystal_powder:2,cursed_cloth:4,spore_sac:2}},
+  {id:'r_iron_shield',item:'iron_shield',cost:{iron_ingot:2,softwood:2}},
+  {id:'r_bone_shield',item:'bone_shield',cost:{bone:6,reinforced_lumber:1,slime_gel:2}},
+  {id:'r_fur_cap',item:'fur_cap',cost:{treated_leather:1,wolf_pelt:1}},
+  {id:'r_iron_helm',item:'iron_helm',cost:{iron_ingot:2,lizard_scale:2}},
+  {id:'r_leather_gloves',item:'leather_gloves',cost:{treated_leather:1,goblin_cloth:2}},
+  {id:'r_iron_gauntlets',item:'iron_gauntlets',cost:{iron_ingot:2,lizard_scale:2}},
+  {id:'r_wolf_pants',item:'wolf_pants',cost:{wolf_pelt:3,treated_leather:1}},
+  {id:'r_mountain_boots',item:'mountain_boots',cost:{boar_hide:2,iron_ingot:1,wolf_pelt:1}},
   {id:'r_fang_charm',item:'fang_charm',cost:{beast_fang:3,wolf_claw:2}},
-  {id:'r_relic_charm',item:'relic_charm',cost:{old_relic:3,magic_crystal:2,ancient_gear:2}}
+  {id:'r_relic_charm',item:'relic_charm',cost:{old_relic:3,crystal_powder:1,ancient_gear:2}}
 ];
+
+export const alchemyRecipes=[
+  {id:'a_herb_extract',material:'herb_extract',count:1,name:'薬草エキス',icon:'🧴',steps:6,cost:{fresh_herb:2},gold:8,desc:'薬草を煮出して濃縮する中間素材。'},
+  {id:'a_potion',consumable:'potion',count:1,name:'ポーション',icon:'🧪',steps:8,cost:{fresh_herb:1,mushroom:1},gold:20,desc:'薬草とキノコを煮出し、瓶詰めする。'},
+  {id:'a_potion_extract',consumable:'potion',count:1,name:'濃縮ポーション',icon:'🧪',steps:10,cost:{herb_extract:1,mushroom:1,slime_gel:1},gold:20,desc:'中間素材を使う安定寄りの調合法。'}
+];
+
+// レア度はデータ側に持たせる。未指定品は価値 / Rank から暫定付与する。
+const rarityByValue=v=>v>=140?'epic':v>=55?'rare':v>=18?'uncommon':'common';
+for(const x of Object.values(items))x.rarity=x.rarity||(x.rank>=2?'rare':x.rank>=1?'uncommon':'common');
+for(const x of Object.values(materials))x.rarity=x.rarity||rarityByValue(x.value||0);
+for(const x of Object.values(consumables))x.rarity=x.rarity||rarityByValue(x.price||0);
+
 
 export const randomEvents=[
   {id:'dew_herb',zones:['outskirts','forest'],phases:['morning'],weight:5,text:'朝露の残る葉陰に薬草を見つけた。',effect:{herb:1}},
