@@ -1,4 +1,4 @@
-const CACHE = 'grindquest-shell-v19';
+const CACHE = 'grindquest-shell-v19-1';
 const FILES = [
   './',
   './index.html',

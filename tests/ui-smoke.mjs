@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {defaultState,startExpedition,togglePartyMember} from '../src/core/game.js';
 import {addStack} from '../src/game/inventory/inventory.js';
-import {learnItem} from '../src/game/discovery/discovery.js';
+import {dismissFirstGet,learnItem,nextFirstGet} from '../src/game/discovery/discovery.js';
 import {AppUI} from '../src/ui/app.js';
 const root={innerHTML:'',querySelectorAll(){return[]},querySelector(){return null},appendChild(){}};const s=defaultState();const ui=new AppUI(root,s,async()=>{});
 ui.render();assert.match(root.innerHTML,/80G/);assert.match(root.innerHTML,/冒険者/);assert.match(root.innerHTML,/酒場/);assert.match(root.innerHTML,/HP 46\/46/);
@@ -12,8 +12,14 @@ ui.itemScene='shop';ui.render();assert.match(root.innerHTML,/武器・防具/);a
 // Regular encyclopedia remains the all-data reference, even before discovery.
 ui.tab='settings';ui.settingsScene='items';ui.render();assert.match(root.innerHTML,/炎晶剣/);
 // First actual acquisition creates a dismissible first-get overlay.
-addStack(s,'iron_ore',1,{container:'bag'});addStack(s,'softwood',1,{container:'bag'});ui.render();assert.match(root.innerHTML,/初ゲット！ ×2/);assert.match(root.innerHTML,/鉄鉱石/);assert.match(root.innerHTML,/やわらかい木材/);assert.equal((root.innerHTML.match(/first-get-backdrop/g)||[]).length,1);
-s.encyclopedia.firstGetQueue=[];
+addStack(s,'iron_ore',1,{container:'bag'});addStack(s,'softwood',1,{container:'bag'});
+assert.equal(nextFirstGet(s)?.id,'iron_ore');ui.firstGetAnimatedKey=null;
+const firstGetOne=ui.firstGetHtml();assert.match(firstGetOne,/初ゲット！/);assert.match(firstGetOne,/鉄鉱石/);assert.doesNotMatch(firstGetOne,/やわらかい木材/);assert.match(firstGetOne,/first-get-animate/);
+// Re-rendering the same pending first-get must not replay its pop animation.
+const firstGetSame=ui.firstGetHtml();assert.match(firstGetSame,/鉄鉱石/);assert.doesNotMatch(firstGetSame,/first-get-animate/);
+// Dismissing one entry advances to the next item and gives the next entry its own animation.
+dismissFirstGet(s);const firstGetTwo=ui.firstGetHtml();assert.match(firstGetTwo,/やわらかい木材/);assert.match(firstGetTwo,/first-get-animate/);
+s.encyclopedia.firstGetQueue=[];ui.firstGetAnimatedKey=null;
 // Adventure handbook only shows knowledge earned in play.
 ui.tab='home';ui.homeScene='handbook';ui.handbookSection='materials';ui.render();assert.match(root.innerHTML,/冒険手帳/);assert.match(root.innerHTML,/鉄鉱石/);assert.doesNotMatch(root.innerHTML,/魔結晶/);
 // Quest board is a separate data-driven base facility.
