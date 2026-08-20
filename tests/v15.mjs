@@ -26,11 +26,11 @@ const old14=defaultState();old14.version=14;togglePartyMember(old14,'boris');cha
 // v0.14 serialized saves may still contain the old player alias; it is ignored.
 old14.player={name:'legacy alias should be ignored',level:99};
 const m=normalize(old14);
-assert.equal(m.version,17);assert.equal(m.characters.hero.level,7);assert.equal(m.characters.boris.level,5);assert.deepEqual(m.party,['hero','boris']);assert.equal(m.gold,432);assert.equal('player' in m,false);
+assert.equal(m.version,18);assert.equal(m.characters.hero.level,7);assert.equal(m.characters.boris.level,5);assert.deepEqual(m.party,['hero','boris']);assert.equal(m.gold,432);assert.equal('player' in m,false);
 
 // pre-v0.14 migration has intentionally ended after the v0.14 progress reset.
 const ancient=normalize({version:13,gold:99999,player:{level:99},settings:{vibrate:false}});
-assert.equal(ancient.version,17);assert.equal(ancient.characters.hero.level,1);assert.equal(ancient.gold,80);assert.equal(ancient.settings.vibrate,false);
+assert.equal(ancient.version,18);assert.equal(ancient.characters.hero.level,1);assert.equal(ancient.gold,80);assert.equal(ancient.settings.vibrate,false);
 
 // Party data is now canonical and derived stats work without state.player.
 for(const c of partyMembers(m)){const d=derivedCharacter(m,c);assert.ok(d.maxHp>0);}

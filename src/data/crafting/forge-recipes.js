@@ -1,6 +1,6 @@
 export const recipes=[
   // 中間素材
-  {id:'m_iron_ingot',material:'iron_ingot',count:1,category:'material',cost:{iron_ore:3}},
+  {id:'m_iron_ingot',material:'iron_ingot',count:1,category:'material',requiresUnlock:true,cost:{iron_ore:3}},
   {id:'m_treated_leather',material:'treated_leather',count:1,category:'material',cost:{rabbit_fur:3,slime_gel:1}},
   {id:'m_reinforced_lumber',material:'reinforced_lumber',count:1,category:'material',cost:{hardwood:2,slime_gel:1}},
   {id:'m_crystal_powder',material:'crystal_powder',count:1,category:'material',cost:{magic_crystal:2,hard_stone:1}},

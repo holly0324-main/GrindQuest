@@ -2,6 +2,7 @@ import { battleSkills, battleSpells, enemies } from '../../data/index.js';
 import { addExp, characterById, derivedCharacter, partyMembers, setTactic, TACTICS } from '../characters/characters.js';
 import { addStack, removeFromStack, stackList } from '../inventory/inventory.js';
 import { seeMonster } from '../discovery/discovery.js';
+import { finalizeExpedition, recordBattleStart, recordEnemyDefeat } from '../expedition/expedition.js';
 import { allDefs, qualityLabel, tagOf } from '../items/catalog.js';
 import { QUALITY_MULT } from '../shared/constants.js';
 import { clamp, pick, rand } from '../shared/utils.js';
@@ -19,7 +20,7 @@ export function beginEncounter(state,enemyId,reason='encounter',meta={}){
   const e=enemies[enemyId];if(!e)return false;
   const count=meta.count||encounterCountFor(e,reason),pool=Array.isArray(meta.groupPool)&&meta.groupPool.length?meta.groupPool:[enemyId],group=Array.from({length:count},(_,i)=>makeBattleEnemy(i===0?enemyId:pick(pool),i));
   state.battle={enemies:group,over:false,won:false,escaped:false,turn:1,escapeAttempts:0,reason,guards:{},pending:{},...meta,log:[`${e.name}${count>1?`たち ×${count}`:''}が あらわれた！`]};
-  for(const foe of group)seeMonster(state,foe.enemyId,'encounter');
+  recordBattleStart(state);for(const foe of group)seeMonster(state,foe.enemyId,'encounter');
   syncLegacyBattle(state.battle);return true;
 }
 const pushBattle=(b,m)=>{b.log.push(m);if(b.log.length>36)b.log.shift();};
@@ -33,11 +34,12 @@ export function battleCurrentActor(state){if(!state.battle||state.battle.over)re
 function enemyLabel(b,target){const same=(b.enemies||[]).filter(x=>x.enemyId===target.enemyId);if(same.length<=1)return enemies[target.enemyId]?.name||'魔物';const idx=same.indexOf(target);return`${enemies[target.enemyId]?.name||'魔物'} ${String.fromCharCode(65+idx)}`;}
 function chooseEnemyTarget(state,payload={}){const alive=livingEnemies(state);return alive.find(x=>x.instanceId===payload.targetId)||alive[0]||null;}
 function choosePartyTarget(state,payload={},fallback=null){const alive=partyMembers(state,{living:true});return alive.find(c=>c.id===payload.targetId)||fallback||alive[0]||null;}
+function markEnemyDefeated(state,target){if(!target||target.hp>0||target.defeatRecorded)return false;const e=enemies[target.enemyId];if(!e)return false;target.defeatRecorded=true;state.encyclopedia=state.encyclopedia||{kills:{}};state.encyclopedia.kills=state.encyclopedia.kills||{};state.encyclopedia.kills[e.id]=(state.encyclopedia.kills[e.id]||0)+1;recordEnemyDefeat(state,e.id,1);return true;}
 function useHealingStack(state,b,stackId,target){const s=state.itemStacks.find(x=>x.stackId===stackId&&x.container==='bag');if(!s||!allDefs(s.id)?.consumable||!target)return{valid:false};const def=allDefs(s.id),removed=removeFromStack(state,stackId,1);if(!removed)return{valid:false};const amount=Math.max(1,Math.round((def.heal||0)*QUALITY_MULT[removed.quality])),d=derivedCharacter(state,target),before=target.hp;target.hp=Math.min(d.maxHp,target.hp+amount);const heal=target.hp-before;pushBattle(b,`${target.name}に${def.name}${qualityLabel(removed.quality)}を使った。HPが ${heal} 回復した。`);return{valid:true,heal,targetId:target.id};}
 function playerAction(state,b,actor,cmd){
   const st=derivedCharacter(state,actor),type=cmd.type,payload=cmd.payload||{};let target=chooseEnemyTarget(state,payload),ally=choosePartyTarget(state,payload,actor),valid=true,enemyDamage=0,heal=0,action=type;
-  if(type==='attack'){if(!target)return{valid:false};enemyDamage=Math.max(1,st.atk+rand(-2,3)-Math.floor(target.def*.55));target.hp=Math.max(0,target.hp-enemyDamage);pushBattle(b,`${actor.name}の攻撃！ ${enemyLabel(b,target)}に ${enemyDamage} ダメージ！`);}
-  else if(type==='skill'){const sk=battleSkills[payload.id||'flame_slash'];if(!sk)valid=false;else if(actor.mp<sk.mp){pushBattle(b,`${actor.name}はMPが たりない！`);valid=false;}else if(!target)valid=false;else{actor.mp-=sk.mp;const rate=sk.id==='heavy_slash'?1.45:1.7;enemyDamage=Math.max(2,Math.floor(st.atk*rate)+rand(-2,4)-Math.floor(target.def*.35));target.hp=Math.max(0,target.hp-enemyDamage);pushBattle(b,`${actor.name}の${sk.name}！ ${enemyLabel(b,target)}に ${enemyDamage} ダメージ！`);action='skill';}}
+  if(type==='attack'){if(!target)return{valid:false};enemyDamage=Math.max(1,st.atk+rand(-2,3)-Math.floor(target.def*.55));target.hp=Math.max(0,target.hp-enemyDamage);markEnemyDefeated(state,target);pushBattle(b,`${actor.name}の攻撃！ ${enemyLabel(b,target)}に ${enemyDamage} ダメージ！`);}
+  else if(type==='skill'){const sk=battleSkills[payload.id||'flame_slash'];if(!sk)valid=false;else if(actor.mp<sk.mp){pushBattle(b,`${actor.name}はMPが たりない！`);valid=false;}else if(!target)valid=false;else{actor.mp-=sk.mp;const rate=sk.id==='heavy_slash'?1.45:1.7;enemyDamage=Math.max(2,Math.floor(st.atk*rate)+rand(-2,4)-Math.floor(target.def*.35));target.hp=Math.max(0,target.hp-enemyDamage);markEnemyDefeated(state,target);pushBattle(b,`${actor.name}の${sk.name}！ ${enemyLabel(b,target)}に ${enemyDamage} ダメージ！`);action='skill';}}
   else if(type==='spell'){const sp=battleSpells[payload.id||'heal'];if(!sp)valid=false;else if(actor.mp<sp.mp){pushBattle(b,`${actor.name}はMPが たりない！`);valid=false;}else{actor.mp-=sp.mp;const d=derivedCharacter(state,ally),before=ally.hp;ally.hp=Math.min(d.maxHp,ally.hp+18+actor.level*4+Math.floor(st.wisdom*.35)+rand(0,5));heal=ally.hp-before;pushBattle(b,`${actor.name}の${sp.name}！ ${ally.name}のHPが ${heal} 回復した。`);action='spell';}}
   else if(type==='defend'){b.guards[actor.id]=true;pushBattle(b,`${actor.name}は身を守っている。`);}
   else if(type==='item'){const r=useHealingStack(state,b,payload.stackId,ally);valid=r.valid;heal=r.heal||0;action='item';if(!valid)pushBattle(b,'その道具は使えない。');}
@@ -55,7 +57,7 @@ function victory(state){
   const b=state.battle; b.over=true;b.won=true;
   state.encyclopedia=state.encyclopedia||{kills:{}};state.encyclopedia.kills=state.encyclopedia.kills||{};
   let totalExp=0;const drops=[],lost=[];
-  for(const be of b.enemies||[]){const e=enemies[be.enemyId];if(!e)continue;state.encyclopedia.kills[e.id]=(state.encyclopedia.kills[e.id]||0)+1;totalExp+=e.exp||0;for(let i=0;i<rollSlots(e);i++){const d=rollLoot(e);if(!d)continue;const q=dropQuality(e,d.id),a=addStack(state,d.id,d.count,{quality:q,container:'bag'});if(a)drops.push(`${allDefs(d.id).name}${qualityLabel(q)}×${a}`);if(a<d.count)lost.push(`${allDefs(d.id).name}×${d.count-a}`);}}
+  for(const be of b.enemies||[]){const e=enemies[be.enemyId];if(!e)continue;markEnemyDefeated(state,be);totalExp+=e.exp||0;for(let i=0;i<rollSlots(e);i++){const d=rollLoot(e);if(!d)continue;const q=dropQuality(e,d.id),a=addStack(state,d.id,d.count,{quality:q,container:'bag'});if(a)drops.push(`${allDefs(d.id).name}${qualityLabel(q)}×${a}`);if(a<d.count)lost.push(`${allDefs(d.id).name}×${d.count-a}`);}}
   if(b.symbolKey){if(b.bossSymbol){state.worldState=state.worldState||{bossDefeatedAt:{}};state.worldState.bossDefeatedAt=state.worldState.bossDefeatedAt||{};state.worldState.bossDefeatedAt[b.symbolKey]=state.calendar.totalSteps;}else if(state.run&&!state.run.defeatedSymbols.includes(b.symbolKey))state.run.defeatedSymbols.push(b.symbolKey);}
   const xp=addExp(state,totalExp,'戦闘');pushBattle(b,`魔物の群れを たおした！ ${xp.msg}`);if(drops.length)pushBattle(b,`戦利品: ${drops.join(' / ')}`);if(lost.length)pushBattle(b,`バッグに入らず置いてきた: ${lost.join(' / ')}`);return{xp,drops,lost};
 }
@@ -108,4 +110,4 @@ export function setBattleTactic(state,charId,tactic){
 }
 export function finishBattle(state){if(!state.battle?.over||(!state.battle.won&&!state.battle.escaped))return{ok:false};const msg=state.battle.escaped?'逃走して周囲へ戻った。':'周囲へ戻った。';state.battle=null;return{ok:true,msg};}
 function loseExplorationBag(state){const keep=[],lost=[];for(const s of state.itemStacks){if(s.container==='bag'&&tagOf(s.id)!=='adventure')lost.push(s);else keep.push(s);}state.itemStacks=keep;return lost;}
-export function defeatReturn(state){if(!state.run)return{ok:false};const lost=loseExplorationBag(state);state.run=null;state.battle=null;for(const c of partyMembers(state)){c.hp=Math.max(1,c.hp);}state.log.unshift('パーティは力尽き、探索品を失って村まで運ばれた。');return{ok:true,lost};}
+export function defeatReturn(state){if(!state.run)return{ok:false};const lost=loseExplorationBag(state),report=finalizeExpedition(state,{method:'defeat',outcome:'defeated'});report.lost=Array.isArray(lost)?lost:[];state.run=null;state.battle=null;for(const c of partyMembers(state)){c.hp=Math.max(1,c.hp);}state.log.unshift('パーティは力尽き、探索品を失って村まで運ばれた。');return{ok:true,lost,report};}

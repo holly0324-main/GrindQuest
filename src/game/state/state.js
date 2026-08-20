@@ -7,19 +7,21 @@ import { FRESH_STORAGE_UPGRADES, STORAGE_UPGRADES, DAY_STEPS } from '../shared/c
 import { clamp, deep } from '../shared/utils.js';
 import { matureProcesses } from '../time/clock.js';
 import { initializeDiscoveryState } from '../discovery/discovery.js';
+import { ensureExpeditionArchive, ensureExpeditionSummary } from '../expedition/expedition.js';
+import { ensureQuestState } from '../quests/quests.js';
 
 export function defaultState(){
   const hero=makeCharacter('hero','冒険者','冒険者',{},{weapon:'gear_1',body:'gear_2',legs:'gear_3',feet:'gear_4'},{recruited:true,growthTreeId:'hero_adventurer'});
   const boris=makeCharacter('boris','ガルド','戦士',{vitality:52,strength:10,agility:6,magic:4,wisdom:5,knowledge:5,dexterity:6},{},{recruited:false,growthTreeId:'warrior_gald'});
   const state={
-  version:17,characters:{hero,boris},party:['hero'],
+  version:18,characters:{hero,boris},party:['hero'],
   gold:80,backpack:'cheap',consumables:{camp_set:0},
   gear:starterGear(),nextGearId:5,ownedItems:{},inventory:{},
   itemStacks:[{stackId:'stk_1',id:'potion',count:1,quality:0,container:'bag',remainingLife:1200,lastAgedStep:0}],nextStackId:2,
   warehouseLevel:0,freshWarehouseLevel:0,
   lifeSkills:{gathering:{level:1,xp:0},mining:{level:1,xp:0},fishing:{level:1,xp:0},woodcut:{level:1,xp:0}},
   calendar:{day:1,stepOfDay:0,totalSteps:0},condition:{awakeSteps:0,fatigueStacks:0},
-  timedProcesses:[],worldState:{bossDefeatedAt:{}},encyclopedia:{kills:{},knowledge:{items:{},monsters:{}},firstGetQueue:[],discoveryInitialized:false},skills:{manualForge:false},run:null,battle:null,idle:null,
+  timedProcesses:[],worldState:{bossDefeatedAt:{}},encyclopedia:{kills:{},knowledge:{items:{},monsters:{},records:{recipes:{},people:{},places:{},rumors:{},events:{}}},firstGetQueue:[],discoveryInitialized:false},skills:{manualForge:false},quests:{accepted:{},claimed:{}},expeditions:{lastResult:null,history:[]},unlocks:{recipes:{}},story:{flags:{}},run:null,battle:null,idle:null,
   log:['ミナト村での暮らしがはじまった。'],settings:{vibrate:true}
 };initializeDiscoveryState(state);return state;}
 
@@ -31,7 +33,7 @@ export function normalize(state){
     base.settings={...base.settings,...(old.settings||{})};
     return base;
   }
-  const s={...base,...old,version:17};
+  const s={...base,...old,version:18};
   s.calendar={...base.calendar,...(old.calendar||{})};
   if(!Number.isFinite(s.calendar.totalSteps))s.calendar.totalSteps=Math.max(0,(Math.max(1,s.calendar.day||1)-1)*DAY_STEPS+(s.calendar.stepOfDay||0));
   s.calendar.day=Math.floor(s.calendar.totalSteps/DAY_STEPS)+1;s.calendar.stepOfDay=s.calendar.totalSteps%DAY_STEPS;
@@ -54,8 +56,9 @@ export function normalize(state){
   s.nextGearId=Math.max(1,Number(old.nextGearId)||1);
   s.gear=Array.isArray(old.gear)?old.gear.map(g=>({gearId:g.gearId||newGearId(s),baseId:g.baseId,workmanship:clamp(g.workmanship||0,0,3),affixes:Array.isArray(g.affixes)?g.affixes:[]})).filter(g=>items[g.baseId]):starterGear();
   if(!s.gear.length){s.gear=starterGear();s.nextGearId=5;}
-  s.condition={...base.condition,...(old.condition||{})};s.settings={...base.settings,...(old.settings||{})};s.skills={...base.skills,...(old.skills||{})};s.timedProcesses=Array.isArray(old.timedProcesses)?old.timedProcesses.map(x=>({...x})) : [];s.worldState={bossDefeatedAt:{...(old.worldState?.bossDefeatedAt||{})}};const oldEnc=old.encyclopedia||{};s.encyclopedia={kills:{...(oldEnc.kills||{})},knowledge:{items:{...(oldEnc.knowledge?.items||{})},monsters:{...(oldEnc.knowledge?.monsters||{})}},firstGetQueue:Array.isArray(oldEnc.firstGetQueue)?oldEnc.firstGetQueue.map(x=>({...x})):[],discoveryInitialized:!!oldEnc.discoveryInitialized};
+  s.condition={...base.condition,...(old.condition||{})};s.settings={...base.settings,...(old.settings||{})};s.skills={...base.skills,...(old.skills||{})};s.timedProcesses=Array.isArray(old.timedProcesses)?old.timedProcesses.map(x=>({...x})) : [];s.worldState={bossDefeatedAt:{...(old.worldState?.bossDefeatedAt||{})}};const oldEnc=old.encyclopedia||{};s.encyclopedia={kills:{...(oldEnc.kills||{})},knowledge:{items:{...(oldEnc.knowledge?.items||{})},monsters:{...(oldEnc.knowledge?.monsters||{})},records:{recipes:{...(oldEnc.knowledge?.records?.recipes||{})},people:{...(oldEnc.knowledge?.records?.people||{})},places:{...(oldEnc.knowledge?.records?.places||{})},rumors:{...(oldEnc.knowledge?.records?.rumors||{})},events:{...(oldEnc.knowledge?.records?.events||{})}}},firstGetQueue:Array.isArray(oldEnc.firstGetQueue)?oldEnc.firstGetQueue.map(x=>({...x})):[],discoveryInitialized:!!oldEnc.discoveryInitialized};
   s.lifeSkills=deep(base.lifeSkills);for(const [k,v] of Object.entries(old.lifeSkills||{}))if(s.lifeSkills[k])s.lifeSkills[k]={...s.lifeSkills[k],...v};
+  s.quests={accepted:{...(old.quests?.accepted||{})},claimed:{...(old.quests?.claimed||{})}};s.expeditions={lastResult:old.expeditions?.lastResult||null,history:Array.isArray(old.expeditions?.history)?old.expeditions.history.slice(0,20):[]};s.unlocks={recipes:{...(old.unlocks?.recipes||{})}};s.story={flags:{...(old.story?.flags||{})}};
   s.warehouseLevel=clamp(Number(old.warehouseLevel)||0,0,STORAGE_UPGRADES.length-1);s.freshWarehouseLevel=clamp(Number(old.freshWarehouseLevel)||0,0,FRESH_STORAGE_UPGRADES.length-1);s.nextStackId=Math.max(1,Number(old.nextStackId)||1);
   s.itemStacks=(Array.isArray(old.itemStacks)?old.itemStacks:base.itemStacks).map(x=>normalizeStack(s,x)).filter(Boolean);consolidatePermanentStacks(s);
 
@@ -69,6 +72,6 @@ export function normalize(state){
   delete s.player;delete s.ownedItems;delete s.inventory;delete s.perishables;
   ageStacks(s,s.calendar.totalSteps);matureProcesses(s);
   for(const c of Object.values(s.characters)){const d=derivedCharacter(s,c);c.hp=clamp(Number.isFinite(c.hp)?c.hp:d.maxHp,0,d.maxHp);c.mp=clamp(Number.isFinite(c.mp)?c.mp:d.maxMp,0,d.maxMp);}
-  initializeDiscoveryState(s);
+  initializeDiscoveryState(s);ensureQuestState(s);ensureExpeditionArchive(s);if(s.run)ensureExpeditionSummary(s);
   return s;
 }

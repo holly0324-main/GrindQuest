@@ -1,31 +1,23 @@
 # Crafting Data
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
-Forge and alchemy recipes.
+Declarative forge and alchemy recipe definitions.
 
 ## Public surface
 
-`forge-recipes.js`, `alchemy-recipes.js`.
-
-## Owned state / data
-
-Static recipes and alchemy process parameters.
-
-## Dependencies
-
-References item/material IDs.
+`forge-recipes.js`, `alchemy-recipes.js`, re-exported by `src/data/index.js`.
 
 ## Invariants
 
-Recipes describe costs/products; runtime consumption and quality are handled by crafting modules.
+Recipe IDs are stable keys and may be persisted as unlock/reward identifiers. Material costs belong here. `requiresUnlock:true` means the forge engine must also find `state.unlocks.recipes[recipe.id]` before displaying the recipe; absence keeps legacy discovery-driven behavior.
 
 ## Extension points
 
-Add recipe unlock metadata, tools, magic modifiers, and additional intermediate products here.
+Quest/story recipe rewards, location/skill requirements and future recipe metadata should be expressed declaratively when possible.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

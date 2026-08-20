@@ -1,8 +1,8 @@
 # UI
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.17
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
@@ -18,14 +18,14 @@ Ephemeral UI state only: selected tabs/scenes/modals/minigame pointers. Game sta
 
 ## Dependencies
 
-Imports game domains directly plus data needed for display.
+Imports domain APIs/projections directly plus canonical data needed for display.
 
 ## Invariants
 
-Do not duplicate gameplay formulas in UI. A UI action should call a domain API, persist via `onChange`, then rerender. First-get notices are dismissed by backdrop tap and encyclopedia unknown entries remain masked until knowledge is granted.
+Do not duplicate gameplay formulas in UI. UI actions call domain APIs, persist via `onChange`, then rerender. The settings Encyclopedia is the full-data reference. The village Adventure Handbook is discovered-only. Expedition result screens render immutable result snapshots rather than querying current inventory.
 
 ## Extension points
 
-Extract screens/components when independently large. v0.17 UI supports in-battle tactic changes, discovery/first-get overlays, discovery-gated forge listings, and the village equipment shop.
+Extract screens/components when independently large. v0.18 adds result presentation, handbook tabs and quest-board cards; these are good candidates for future component extraction if they grow.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

@@ -1,12 +1,12 @@
 # Characters and Party
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
-Character records, derived stats, party membership, tactics, EXP/level growth, and APP allocation.
+Character records, derived stats, party membership, tactics, EXP/level growth, APP allocation, and expedition EXP observation.
 
 ## Public surface
 
@@ -18,11 +18,11 @@ Character records, derived stats, party membership, tactics, EXP/level growth, a
 
 ## Dependencies
 
-Equipment model, condition, shared utilities.
+Equipment model, condition, expedition observer, shared utilities.
 
 ## Invariants
 
-Maximum active party size is four. Derived combat values must come through `derivedCharacter()`. Level-up grants APP and does not heal current HP/MP.
+Maximum active party size is four. Derived combat values must come through `derivedCharacter()`. Level-up grants APP and does not heal current HP/MP. One EXP reward event is recorded once in the expedition summary, not once per party member.
 
 ## Extension points
 

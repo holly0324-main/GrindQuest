@@ -1,8 +1,8 @@
 # Game Data
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.17
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
@@ -14,7 +14,7 @@ Declarative game content. Definitions are split by content family and re-exporte
 
 ## Owned state / data
 
-Static definitions only, including location-specific shop inventories under `shops/`.
+Static definitions only, including items, monsters, world, crafting, shops and request-board definitions under `quests/`.
 
 ## Dependencies
 
@@ -22,7 +22,7 @@ No gameplay modules. `catalog-normalize.js` may normalize legacy rank fields aft
 
 ## Invariants
 
-Data must not mutate runtime state. IDs are stable save/content keys. Shop lists reference canonical item IDs and do not duplicate item prices/stats.
+Data must not mutate runtime state. IDs are stable save/content keys. Quest definitions contain declarative objectives/rewards only; runtime evaluation belongs in `game/quests`.
 
 ## Extension points
 

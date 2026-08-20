@@ -1,4 +1,4 @@
-const CACHE = 'grindquest-shell-v17';
+const CACHE = 'grindquest-shell-v18';
 const FILES = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const FILES = [
   './src/data/crafting/forge-recipes.js',
   './src/data/gameData.js',
   './src/data/index.js',
+  './src/data/quests/quests.js',
   './src/data/inventory/backpacks.js',
   './src/data/items/consumables.js',
   './src/data/items/equipment.js',
@@ -34,11 +35,14 @@ const FILES = [
   './src/game/encyclopedia/encyclopedia.js',
   './src/game/equipment/actions.js',
   './src/game/equipment/model.js',
+  './src/game/expedition/expedition.js',
+  './src/game/handbook/handbook.js',
   './src/game/equipment/shop.js',
   './src/game/exploration/exploration.js',
   './src/game/idle/idle.js',
   './src/game/inventory/inventory.js',
   './src/game/items/catalog.js',
+  './src/game/quests/quests.js',
   './src/game/save/storage.js',
   './src/game/shared/constants.js',
   './src/game/shared/utils.js',

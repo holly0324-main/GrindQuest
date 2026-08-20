@@ -1,28 +1,36 @@
 # Game Domains
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.17
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
-Gameplay implementation organized by responsibility. v0.17 adds `discovery/` as the low-level domain for item/monster knowledge and first-acquisition tracking.
+Gameplay implementation organized by responsibility.
+
+v0.18 adds:
+
+- `expedition/` — one-outing result tracking
+- `handbook/` — discovered-only player record projection
+- `quests/` — data-driven objectives/rewards
+
+`discovery/` remains the canonical knowledge layer.
 
 ## Public surface
 
-Each child directory exposes its own module API. `core/game.js` aggregates them only for compatibility.
+Each child directory exposes its own API. `core/game.js` aggregates historical APIs only for compatibility.
 
 ## Owned state / data
 
-Runtime state is partitioned by child-domain ownership. `discovery/` owns knowledge/acquisition metadata while `encyclopedia/` owns presentation assembly and kill-count display.
+Runtime state is partitioned by child-domain ownership. See root `ARCHITECTURE.md`.
 
 ## Dependencies
 
-Data and lower-level game domains only. See root `ARCHITECTURE.md` for the dependency direction.
+Data and lower-level game domains only. UI must never be imported by gameplay domains.
 
 ## Invariants
 
-Avoid importing UI. Prefer one-way dependencies documented in root `ARCHITECTURE.md`. Cross-cutting discovery changes go through `game/discovery` rather than being duplicated in battle/inventory/shop code.
+Avoid feature-specific cross-domain branches. Discovery goes through `game/discovery`; one-adventure metrics through `game/expedition`; request-board content belongs in `data/quests` and is interpreted by `game/quests`.
 
 ## Extension points
 

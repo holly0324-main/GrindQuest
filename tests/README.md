@@ -1,19 +1,21 @@
 # Tests
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.18
 
 ## Active npm test path
 
 - `smoke.mjs` — basic game loop
 - `route.mjs` — world route integrity
 - `camp-raid.mjs` — camping encounter behavior
-- `v14.mjs` — party/multi-enemy baseline behavior
-- `v15.mjs` — field healing targets and v0.14+ save baseline
-- `v16.mjs` — architecture boundaries/facades/direct domain imports
-- `ui-smoke.mjs` — render/binding smoke test
+- `v14.mjs` — party/multi-enemy baseline
+- `v15.mjs` — field healing targets/save baseline
+- `v16.mjs` — architecture boundaries/facades
+- `v17.mjs` — discovery, battle tactics, forge gating, equipment shop
+- `v18.mjs` — expedition result tracking, Adventure Handbook, quest objectives/rewards and recipe unlock
+- `ui-smoke.mjs` — screen/render smoke including result/handbook/quest board
 
-Older `v05`–`v13` files are historical regression references and are not all part of the current npm script because v0.14 intentionally reset progress compatibility.
+Older `v05`–`v13` files are historical references and are not all active because v0.14 intentionally reset progress compatibility.
 
-When a cross-domain contract or save schema changes, add/update the focused version test and keep the smoke suite green.
+When a cross-domain contract or save schema changes, add/update the focused version test and keep the active suite green.

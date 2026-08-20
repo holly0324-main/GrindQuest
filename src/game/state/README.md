@@ -1,8 +1,8 @@
 # State Composition and Normalization
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.17
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
@@ -14,18 +14,25 @@ Create the complete runtime state and normalize supported historical saves into 
 
 ## Owned state / data
 
-Composition of the complete save shape. Individual nested domains remain owned by their domain modules.
+Composition of the complete save shape. Nested domains remain owned by their domain modules.
 
 ## Dependencies
 
-All low-level domains needed to construct/normalize state, including discovery initialization.
+Low-level domains needed to construct/normalize state, including discovery, expedition archive and quest initialization.
 
 ## Invariants
 
-v0.14 remains the progress compatibility baseline. Current version is 17. Existing possessions and kills from v0.16 are silently backfilled into discovery knowledge without generating first-get popups.
+v0.14 remains the progress compatibility baseline. Current version is 18. Existing possessions/kills are silently backfilled into discovery without generating first-get spam. v0.18 safely initializes:
+
+- `state.expeditions`
+- `state.quests`
+- generic discovery records
+- `state.unlocks.recipes`
+- `state.story.flags`
+- mid-run `state.run.summary` when needed
 
 ## Extension points
 
-Add migration steps only when a persisted state shape changes. Prefer domain-normalization helpers over duplicating domain rules here.
+Add migration logic only for persisted shape changes. Prefer domain normalization helpers over duplicating rules here.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

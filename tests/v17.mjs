@@ -12,7 +12,7 @@ import { recipes } from '../src/data/index.js';
 import { buyEquipment, revealEquipmentShop } from '../src/game/equipment/shop.js';
 
 const s=defaultState();
-assert.equal(s.version,17);
+assert.equal(s.version,18);
 assert.equal(isItemObtained(s,'novice_sword'),true);
 assert.equal(isItemObtained(s,'potion'),true);
 assert.equal(nextFirstGet(s),null);
@@ -47,6 +47,8 @@ assert.equal(r.ok,true);assert.equal(s.characters.boris.tactic,'manual');assert.
 const fresh=defaultState(),ingot=recipes.find(x=>x.id==='m_iron_ingot');
 assert.equal(forgeRecipeVisible(fresh,ingot),false);
 learnItem(fresh,'iron_ore','story');
+assert.equal(forgeRecipeVisible(fresh,ingot),false);
+fresh.unlocks.recipes.m_iron_ingot=true;
 assert.equal(forgeRecipeVisible(fresh,ingot),true);
 assert.equal(hasForgeSkill(fresh),false);
 assert.equal(selfCraft(fresh,'m_iron_ingot',1).ok,false);

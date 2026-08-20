@@ -1,6 +1,7 @@
 import { fatiguePenalty } from '../condition/condition.js';
 import { gearById, gearStats } from '../equipment/model.js';
 import { sum } from '../shared/utils.js';
+import { recordExpGain } from '../expedition/expedition.js';
 
 export const TACTICS={
   manual:{id:'manual',name:'めいれいさせろ',desc:'毎ターン自分でコマンドを選ぶ。'},
@@ -37,4 +38,4 @@ export function togglePartyMember(state,charId){if(state.run||state.battle)retur
 export function allocateParameterPoint(state,charId,key){const c=characterById(state,charId);if(!c||!PARAMETER_LABELS[key])return{ok:false,msg:'その能力には振れない。'};if((c.appPoints||0)<=0)return{ok:false,msg:'APPがない。'};c.appPoints--;c.stats[key]=(c.stats[key]||0)+1;const d=derivedCharacter(state,c);c.hp=Math.min(c.hp,d.maxHp);c.mp=Math.min(c.mp,d.maxMp);return{ok:true,msg:`${c.name}の${PARAMETER_LABELS[key]}が1上がった。`};}
 function growMainLevel(state,c){const st=c.stats;st.vitality+=5;st.strength+=2;st.agility+=c.level%2?1:2;st.magic+=1;st.wisdom+=1;st.knowledge+=c.level%2?0:1;st.dexterity+=1;c.appPoints=(c.appPoints||0)+1;}
 function addCharacterExp(state,c,amount){c.exp+=amount;let levels=0;while(c.exp>=expToNext(c.level)){c.exp-=expToNext(c.level);c.level++;growMainLevel(state,c);levels++;state.log.unshift(`${c.name}は レベル ${c.level} になった！ APP+1 / HP・MPはそのまま。`);}const d=derivedCharacter(state,c);c.hp=Math.min(c.hp,d.maxHp);c.mp=Math.min(c.mp,d.maxMp);return levels;}
-export function addExp(state,amount,source='経験'){amount=Math.max(0,Math.floor(amount||0));if(!amount)return{amount:0,levels:0,msg:''};const members=partyMembers(state),ups=[];let leadLevels=0;for(const c of members){const lv=addCharacterExp(state,c,amount);if(c.id==='hero')leadLevels=lv;if(lv)ups.push(`${c.name} Lv.${c.level}`);}return{amount,levels:leadLevels,msg:`${source} EXP +${amount}${ups.length?` / ${ups.join('・')}！`:''}`};}
+export function addExp(state,amount,source='経験'){amount=Math.max(0,Math.floor(amount||0));if(!amount)return{amount:0,levels:0,msg:''};recordExpGain(state,amount);const members=partyMembers(state),ups=[];let leadLevels=0;for(const c of members){const lv=addCharacterExp(state,c,amount);if(c.id==='hero')leadLevels=lv;if(lv)ups.push(`${c.name} Lv.${c.level}`);}return{amount,levels:leadLevels,msg:`${source} EXP +${amount}${ups.length?` / ${ups.join('・')}！`:''}`};}

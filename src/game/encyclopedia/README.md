@@ -1,16 +1,16 @@
 # Encyclopedia
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.17
+- Last Architecture Change: v0.18
 
 ## Responsibility
 
-Build item and monster encyclopedia views from canonical data plus discovery records and runtime kill counts.
+Build full item/monster reference projections from canonical data plus runtime kill/discovery metadata.
 
 ## Public surface
 
-`encyclopedia.js` returns display-ready item/monster entries. Discovery mutation/query APIs live in the separate low-level `game/discovery` domain.
+`encyclopedia.js` returns display-ready item/monster entries. Discovery mutation/query APIs live in `game/discovery`.
 
 ## Owned state / data
 
@@ -18,14 +18,14 @@ Reads `state.encyclopedia.kills` and discovery state; does not own acquisition m
 
 ## Dependencies
 
-Data, item catalog, and discovery queries.
+Canonical data, item catalog, discovery queries.
 
 ## Invariants
 
-Do not copy drop rates/habitats into encyclopedia-specific data; derive them from canonical tables. Undiscovered content is masked by UI rather than removed from canonical definitions.
+Do not copy drop rates/habitats into encyclopedia-specific data; derive them from canonical tables. **The encyclopedia is allowed to show the full canonical catalog regardless of discovery.** Discovery flags are metadata only. The discovered-only player-facing view belongs to `game/handbook`.
 
 ## Extension points
 
-Completion rates, lore pages, regional indexes, hidden entries, and knowledge-source descriptions.
+Additional reference filters, lore pages, regional indexes and developer/reference diagnostics.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.
