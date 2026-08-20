@@ -1,12 +1,12 @@
 # Economy
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.17
 
 ## Responsibility
 
-Village purchasing, backpack upgrades, material/valuable selling.
+Consumable purchasing, backpack upgrades, and material/valuable selling. Successful item purchases register actual acquisition through the discovery domain.
 
 ## Public surface
 
@@ -14,18 +14,18 @@ Village purchasing, backpack upgrades, material/valuable selling.
 
 ## Owned state / data
 
-`state.gold`; invokes inventory mutation.
+Mutates `state.gold`, backpack selection, consumable ownership, and inventory through inventory APIs.
 
 ## Dependencies
 
-Inventory and item/backpack data.
+Inventory, discovery, item/backpack data, and item tag/quality helpers.
 
 ## Invariants
 
-Enemies do not award money directly; money primarily comes from selling items.
+Selling is village-only. Inventory capacity is checked before charging for stack items. Equipment purchasing is intentionally owned by `game/equipment/shop.js`, not this module.
 
 ## Extension points
 
-Add shops, regional prices, merchants, and buyback policies here.
+Town price modifiers, merchants, buyback, reputation, and economy-specific events.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

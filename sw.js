@@ -1,4 +1,4 @@
-const CACHE = 'grindquest-shell-v16';
+const CACHE = 'grindquest-shell-v17';
 const FILES = [
   './',
   './index.html',
@@ -18,6 +18,7 @@ const FILES = [
   './src/data/items/equipment.js',
   './src/data/items/materials.js',
   './src/data/monsters/enemies.js',
+  './src/data/shops/equipment-shops.js',
   './src/data/world/local-areas.js',
   './src/data/world/random-events.js',
   './src/data/world/world-map.js',
@@ -29,9 +30,11 @@ const FILES = [
   './src/game/crafting/alchemy-actions.js',
   './src/game/crafting/forge.js',
   './src/game/economy/economy.js',
+  './src/game/discovery/discovery.js',
   './src/game/encyclopedia/encyclopedia.js',
   './src/game/equipment/actions.js',
   './src/game/equipment/model.js',
+  './src/game/equipment/shop.js',
   './src/game/exploration/exploration.js',
   './src/game/idle/idle.js',
   './src/game/inventory/inventory.js',

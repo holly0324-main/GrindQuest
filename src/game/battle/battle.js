@@ -1,6 +1,7 @@
 import { battleSkills, battleSpells, enemies } from '../../data/index.js';
-import { addExp, characterById, derivedCharacter, partyMembers } from '../characters/characters.js';
+import { addExp, characterById, derivedCharacter, partyMembers, setTactic, TACTICS } from '../characters/characters.js';
 import { addStack, removeFromStack, stackList } from '../inventory/inventory.js';
+import { seeMonster } from '../discovery/discovery.js';
 import { allDefs, qualityLabel, tagOf } from '../items/catalog.js';
 import { QUALITY_MULT } from '../shared/constants.js';
 import { clamp, pick, rand } from '../shared/utils.js';
@@ -18,6 +19,7 @@ export function beginEncounter(state,enemyId,reason='encounter',meta={}){
   const e=enemies[enemyId];if(!e)return false;
   const count=meta.count||encounterCountFor(e,reason),pool=Array.isArray(meta.groupPool)&&meta.groupPool.length?meta.groupPool:[enemyId],group=Array.from({length:count},(_,i)=>makeBattleEnemy(i===0?enemyId:pick(pool),i));
   state.battle={enemies:group,over:false,won:false,escaped:false,turn:1,escapeAttempts:0,reason,guards:{},pending:{},...meta,log:[`${e.name}${count>1?`たち ×${count}`:''}が あらわれた！`]};
+  for(const foe of group)seeMonster(state,foe.enemyId,'encounter');
   syncLegacyBattle(state.battle);return true;
 }
 const pushBattle=(b,m)=>{b.log.push(m);if(b.log.length>36)b.log.shift();};
@@ -94,6 +96,15 @@ export function command(state,type,payload={}){
   b.pending[actor.id]=probe;fillAutoCommands(state,b);
   const next=battleCurrentActor(state);if(next)return{ok:true,awaiting:true,nextActorId:next.id};
   return resolveRound(state,b);
+}
+
+export function setBattleTactic(state,charId,tactic){
+  const b=ensureBattleShape(state);if(!b||b.over)return{ok:false,msg:'戦闘中ではない。'};
+  if(!TACTICS[tactic])return{ok:false,msg:'その作戦は選べない。'};
+  const r=setTactic(state,charId,tactic);if(!r.ok)return r;
+  delete b.pending?.[charId];
+  pushBattle(b,`${characterById(state,charId)?.name||'仲間'}の作戦を「${TACTICS[tactic].name}」に変更した。`);
+  return r;
 }
 export function finishBattle(state){if(!state.battle?.over||(!state.battle.won&&!state.battle.escaped))return{ok:false};const msg=state.battle.escaped?'逃走して周囲へ戻った。':'周囲へ戻った。';state.battle=null;return{ok:true,msg};}
 function loseExplorationBag(state){const keep=[],lost=[];for(const s of state.itemStacks){if(s.container==='bag'&&tagOf(s.id)!=='adventure')lost.push(s);else keep.push(s);}state.itemStacks=keep;return lost;}

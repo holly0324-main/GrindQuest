@@ -1,31 +1,31 @@
 # Equipment
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.17
 
 ## Responsibility
 
-Gear instance model/stat calculation and equip/sell actions.
+Gear instance model/stat calculation, equip/sell actions, and location-specific equipment shop purchasing.
 
 ## Public surface
 
-`model.js` for pure gear lookup/stat helpers; `actions.js` for state mutations.
+`model.js` for pure gear lookup/stat helpers; `actions.js` for equip/sell mutations; `shop.js` for shop stock/reveal/purchase.
 
 ## Owned state / data
 
-`state.gear` and character equipment references.
+`state.gear` and character equipment references. Shop stock itself is static under `src/data/shops`.
 
 ## Dependencies
 
-Item data; character module only from actions, never from model.
+Item/shop data and discovery; character module only from actions, never from model.
 
 ## Invariants
 
-Gear instances reference immutable base IDs. One gear instance may be equipped by only one character.
+Gear instances reference immutable base IDs. One gear instance may be equipped by only one character. Shop purchases create workmanship-0 gear and record first acquisition.
 
 ## Extension points
 
-Add affix pools, durability, reforging, and workmanship rules without changing character base stats.
+Additional town stock, affix pools, durability, reforging, workmanship rules, reputation, and shop conditions.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

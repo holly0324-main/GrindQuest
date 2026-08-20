@@ -35,10 +35,10 @@ export const materials = {
   honey_drop:{id:'honey_drop',name:'濃い蜂蜜',icon:'🍯',tag:'adventure',value:18,bulk:1,shelfLife:900,consumable:true,heal:16,desc:'少量だがそのまま食べられる。'},
   moth_powder:{id:'moth_powder',name:'洞蛾の燐粉',icon:'🦋',tag:'material',value:25,bulk:1},
   moon_scale:{id:'moon_scale',name:'月鱗',icon:'🌙',tag:'valuable',value:170,bulk:1},
-  iron_ingot:{id:'iron_ingot',name:'鉄のインゴット',icon:'▰',tag:'material',value:46,bulk:2,desc:'鉄鉱石を精錬した鍛冶用の中間素材。'},
-  treated_leather:{id:'treated_leather',name:'なめし革',icon:'🟫',tag:'material',value:38,bulk:1,desc:'獣毛や皮を加工した扱いやすい革材。'},
-  reinforced_lumber:{id:'reinforced_lumber',name:'強化木材',icon:'🪵',tag:'material',value:42,bulk:2,desc:'樹脂で締めた鍛冶・工作用の木材。'},
-  crystal_powder:{id:'crystal_powder',name:'晶石の粉',icon:'✨',tag:'material',value:72,bulk:1,desc:'魔結晶を細かく砕いて選別した中間素材。'},
-  herb_extract:{id:'herb_extract',name:'薬草エキス',icon:'🧴',tag:'material',value:28,bulk:1,shelfLife:900,desc:'薬草を煮出した調合用中間素材。品質で寿命が伸びる。'},
-  alchemy_sludge:{id:'alchemy_sludge',name:'濁った薬液',icon:'🫗',tag:'material',rarity:'common',value:1,bulk:1,shelfLife:240,desc:'調合に失敗してできた不安定な薬液。今のところ用途はほぼない。'}
+  iron_ingot:{id:'iron_ingot',rank:1,name:'鉄のインゴット',icon:'▰',tag:'material',value:46,bulk:2,desc:'鉄鉱石を精錬した鍛冶用の中間素材。'},
+  treated_leather:{id:'treated_leather',rank:1,name:'なめし革',icon:'🟫',tag:'material',value:38,bulk:1,desc:'獣毛や皮を加工した扱いやすい革材。'},
+  reinforced_lumber:{id:'reinforced_lumber',rank:1,name:'強化木材',icon:'🪵',tag:'material',value:42,bulk:2,desc:'樹脂で締めた鍛冶・工作用の木材。'},
+  crystal_powder:{id:'crystal_powder',rank:1,name:'晶石の粉',icon:'✨',tag:'material',value:72,bulk:1,desc:'魔結晶を細かく砕いて選別した中間素材。'},
+  herb_extract:{id:'herb_extract',rank:1,name:'薬草エキス',icon:'🧴',tag:'material',value:28,bulk:1,shelfLife:900,desc:'薬草を煮出した調合用中間素材。品質で寿命が伸びる。'},
+  alchemy_sludge:{id:'alchemy_sludge',rank:0,name:'濁った薬液',icon:'🫗',tag:'material',rarity:'common',value:1,bulk:1,shelfLife:240,desc:'調合に失敗してできた不安定な薬液。今のところ用途はほぼない。'}
 };

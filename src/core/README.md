@@ -1,8 +1,8 @@
 # Core Compatibility Facades
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.17
 
 ## Responsibility
 
@@ -10,7 +10,7 @@ Preserve historical import paths while implementation lives in domain modules. N
 
 ## Public surface
 
-`game.js`, `alchemy.js`, `storage.js` only re-export current implementations.
+`game.js`, `alchemy.js`, `storage.js` only re-export current implementations. v0.17 adds additive facade exports for discovery and equipment-shop APIs.
 
 ## Owned state / data
 

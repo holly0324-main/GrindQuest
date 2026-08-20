@@ -2,7 +2,7 @@
 
 - Document Version: 1
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.17
 
 ## Goal
 
@@ -13,7 +13,7 @@ GrindQuest is a static ES-module PWA. The architecture is organized by gameplay 
 ```text
 src/data/*
    ↓
-src/game/shared + items + condition
+src/game/shared + items + condition + discovery
    ↓
 equipment/model + characters + inventory
    ↓
@@ -36,7 +36,8 @@ ui + main
 - `state.calendar`, `state.condition`, `state.timedProcesses` → `game/time` / `game/condition`
 - `state.battle` → `game/battle`
 - `state.run`, `state.lifeSkills`, local-area traversal → `game/exploration`
-- `state.encyclopedia` → `game/encyclopedia`
+- `state.encyclopedia.knowledge` / first-get queue → `game/discovery`
+- `state.encyclopedia.kills` / encyclopedia presentation → `game/encyclopedia`
 - complete state creation / migration → `game/state`
 
 ## Rules for future changes
@@ -49,6 +50,7 @@ ui + main
 6. `src/core/*` compatibility facades must remain stable until intentionally retired.
 7. When a module responsibility/public API/state shape changes, increment that directory README's `Document Version` and update `Last Architecture Change`.
 8. Add or update a focused test before changing a cross-domain contract.
+9. Acquisition/encounter knowledge is recorded through `game/discovery`; presentation modules should query it rather than mutate it directly.
 
 ## UI policy
 

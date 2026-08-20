@@ -1,31 +1,31 @@
 # Battle
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.17
 
 ## Responsibility
 
-Up to four party members versus multiple independent enemies, command queueing, tactics, initiative, rewards, escape, defeat.
+Up to four party members versus multiple independent enemies, command queueing, in-battle tactic changes, initiative, rewards, escape, defeat, and encounter discovery.
 
 ## Public surface
 
-`battle.js`; key APIs include `beginEncounter`, `command`, `finishBattle`, `battleCurrentActor`, `livingEnemies`.
+`battle.js`; key APIs include `beginEncounter`, `command`, `setBattleTactic`, `finishBattle`, `battleCurrentActor`, and `livingEnemies`.
 
 ## Owned state / data
 
-`state.battle`; records kills/rewards as explicit cross-domain effects.
+`state.battle`; records kills/rewards and enemy sightings as explicit cross-domain effects.
 
 ## Dependencies
 
-Characters, inventory, clock, monster/action data.
+Characters, inventory, discovery, clock, monster/action data.
 
 ## Invariants
 
-One resolved round advances exactly one world step. Initiative uses agility plus small randomness. Enemies remain independent entities.
+One resolved round advances exactly one world step. Initiative uses agility plus small randomness. Enemies remain independent entities. Changing a tactic costs no turn and clears that character's stale pending command.
 
 ## Extension points
 
-Add multi-target actions, statuses, enemy AI profiles, formations, revival, and boss phases here.
+Add multi-target actions, statuses, enemy AI profiles, formations, revival, boss phases, and additional tactics here.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

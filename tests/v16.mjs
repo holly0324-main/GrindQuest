@@ -10,7 +10,7 @@ import * as data from '../src/data/index.js';
 import * as legacyDataFacade from '../src/data/gameData.js';
 
 const s=defaultState();
-assert.equal(s.version,16);
+assert.equal(s.version,17);
 assert.equal(partyMembers(s).length,1);
 assert.ok(derivedCharacter(s,'hero').maxHp>0);
 assert.equal(stackList(s,'bag','potion').length,1);
@@ -19,7 +19,7 @@ assert.equal(startExpedition(s).ok,true);
 // v0.15 saves remain the supported v0.14+ compatibility line.
 const old=defaultState();old.version=15;old.gold=777;old.characters.hero.level=4;
 const migrated=normalize(old);
-assert.equal(migrated.version,16);assert.equal(migrated.gold,777);assert.equal(migrated.characters.hero.level,4);
+assert.equal(migrated.version,17);assert.equal(migrated.gold,777);assert.equal(migrated.characters.hero.level,4);
 
 // Compatibility facade exposes the same public entry points used by older tests/callers.
 for(const key of ['defaultState','normalize','command','startExpedition','stackList','alchemyRecipes','worldNodes'])assert.ok(key in facade,key);

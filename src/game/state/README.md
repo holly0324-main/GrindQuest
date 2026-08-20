@@ -1,31 +1,31 @@
-# Game State Composition
+# State Composition and Normalization
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.17
 
 ## Responsibility
 
-Create a new state and normalize supported saves into the current schema.
+Create the complete runtime state and normalize supported historical saves into the current shape.
 
 ## Public surface
 
-`defaultState()`, `normalize()`.
+`defaultState`, `normalize` in `state.js`.
 
 ## Owned state / data
 
-Whole-state schema composition/migration only.
+Composition of the complete save shape. Individual nested domains remain owned by their domain modules.
 
 ## Dependencies
 
-All domains necessary to validate/normalize their owned portions.
+All low-level domains needed to construct/normalize state, including discovery initialization.
 
 ## Invariants
 
-v0.14 is the progress compatibility baseline. This module orchestrates migration but must not become general gameplay logic.
+v0.14 remains the progress compatibility baseline. Current version is 17. Existing possessions and kills from v0.16 are silently backfilled into discovery knowledge without generating first-get popups.
 
 ## Extension points
 
-When state schema changes, add a focused version test and document the migration.
+Add migration steps only when a persisted state shape changes. Prefer domain-normalization helpers over duplicating domain rules here.
 
 When responsibility, public API, or owned state changes, increment `Document Version`.

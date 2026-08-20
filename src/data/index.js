@@ -11,3 +11,4 @@ export { localAreas } from './world/local-areas.js';
 export { recipes } from './crafting/forge-recipes.js';
 export { alchemyRecipes } from './crafting/alchemy-recipes.js';
 export { randomEvents } from './world/random-events.js';
+export { equipmentShops } from './shops/equipment-shops.js';
