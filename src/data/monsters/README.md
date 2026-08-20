@@ -1,12 +1,12 @@
 # Monster Data
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
-Monster base stats, reward slots, and loot tables.
+Monster base stats, base level, reward slots, and loot tables.
 
 ## Public surface
 
@@ -22,7 +22,7 @@ Item IDs referenced by loot are resolved at runtime.
 
 ## Invariants
 
-Each enemy has independent HP/ATK/DEF/AGI/EXP. Loot definitions stay declarative.
+Each enemy definition exposes a Lv.1 base reference (`baseLevel`) plus HP/ATK/DEF/AGI/EXP. Runtime level scaling is owned by battle; static monster data must not depend on map location.
 
 ## Extension points
 

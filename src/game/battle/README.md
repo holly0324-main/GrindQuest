@@ -1,8 +1,8 @@
 # Battle
 
-- Document Version: 3
+- Document Version: 4
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -10,7 +10,7 @@ Up to four party members versus multiple independent enemies, command queueing, 
 
 ## Public surface
 
-`battle.js`; key APIs include `beginEncounter`, `command`, `setBattleTactic`, `finishBattle`, `defeatReturn`, `battleCurrentActor`, `livingEnemies`.
+`battle.js`; key APIs include `beginEncounter`, `makeBattleEnemy`, `rollEnemyLevel`, `enemyStatsAtLevel`, `battleExpMultiplier`, `battleExpRewards`, `command`, `setBattleTactic`, `finishBattle`, `defeatReturn`, `battleCurrentActor`, `livingEnemies`.
 
 ## Owned state / data
 
@@ -22,7 +22,7 @@ Characters, inventory, discovery, expedition observer, clock, monster/action dat
 
 ## Invariants
 
-One resolved round advances exactly one world step. Initiative uses agility plus small randomness. Enemies remain independent entities. Changing tactic costs no turn and clears stale pending commands. Encounter count is recorded at battle start; defeated units are counted on victory. Defeat finalizes the current expedition before `state.run` is cleared.
+One resolved round advances exactly one world step. Initiative uses agility plus small randomness. Each enemy instance owns a rolled `level` and scaled combat stats. Battle EXP is calculated per character: when character Lv > enemy Lv, reward is reduced by 10% per level difference, clamped at zero. Changing tactic costs no turn and clears stale pending commands.
 
 ## Extension points
 

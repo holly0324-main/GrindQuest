@@ -1,8 +1,8 @@
 # World Data
 
-- Document Version: 1
+- Document Version: 2
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.16
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -22,7 +22,7 @@ Monster/item IDs only.
 
 ## Invariants
 
-World node IDs and local area node IDs are stable content keys. `field` and `dungeon` remain distinct local-area types.
+Zone/local-area data may declare `enemyLevels:{min,max,rareMax,rareChance}` and nodes may override with fixed `enemyLevel`. Encounter strength distribution stays data-driven.
 
 ## Extension points
 

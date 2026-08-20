@@ -12,7 +12,7 @@ import { recipes } from '../src/data/index.js';
 import { buyEquipment, revealEquipmentShop } from '../src/game/equipment/shop.js';
 
 const s=defaultState();
-assert.equal(s.version,18);
+assert.equal(s.version,19);
 assert.equal(isItemObtained(s,'novice_sword'),true);
 assert.equal(isItemObtained(s,'potion'),true);
 assert.equal(nextFirstGet(s),null);

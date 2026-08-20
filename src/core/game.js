@@ -1,4 +1,4 @@
-// GrindQuest v0.17 public game API facade.
+// GrindQuest v0.19 public game API facade.
 // New code should import a domain module directly when practical.
 export * from '../game/shared/constants.js';
 export * from '../game/items/catalog.js';

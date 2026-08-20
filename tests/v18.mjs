@@ -16,7 +16,7 @@ const old=defaultState();
 old.version=17;
 old.encyclopedia.knowledge.items.iron_ore={known:true,obtained:false};
 const migrated=normalize(old);
-assert.equal(migrated.version,18);
+assert.equal(migrated.version,19);
 assert.equal(isItemDiscovered(migrated,'iron_ore'),true);
 assert.ok(migrated.quests?.accepted);
 assert.ok(migrated.expeditions?.history);

@@ -1,8 +1,8 @@
 # Characters and Party
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -10,7 +10,7 @@ Character records, derived stats, party membership, tactics, EXP/level growth, A
 
 ## Public surface
 
-`characters.js`.
+`characters.js`; v0.19 adds `addExpByCharacter(state, amounts, source)` for per-character reward maps.
 
 ## Owned state / data
 
@@ -22,7 +22,7 @@ Equipment model, condition, expedition observer, shared utilities.
 
 ## Invariants
 
-Maximum active party size is four. Derived combat values must come through `derivedCharacter()`. Level-up grants APP and does not heal current HP/MP. One EXP reward event is recorded once in the expedition summary, not once per party member.
+Maximum active party size is four. Derived combat values must come through `derivedCharacter()`. Level-up grants APP and does not heal current HP/MP. `addExpByCharacter()` supports per-member battle rewards; expedition EXP records the lead character amount once, never once per party member.
 
 ## Extension points
 

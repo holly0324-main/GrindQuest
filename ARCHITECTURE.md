@@ -1,8 +1,8 @@
 # GrindQuest Architecture
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Goal
 
@@ -46,6 +46,16 @@ ui + main
 - discovered-only handbook projection → `game/handbook` (read-only)
 - `state.quests` and quest reward unlock flags → `game/quests`
 - complete state creation / migration → `game/state`
+
+## v0.19 enemy-level boundary
+
+Enemy species data remains declarative in `src/data/monsters`. Existing stats are the `baseLevel: 1` reference. Encounter-level distribution belongs to world data (`zones[*].enemyLevels`, with optional local-area/node overrides). Exploration passes that context into `beginEncounter`; battle owns level rolling, instance stat scaling and battle EXP level-difference calculation.
+
+This keeps the same species reusable at different strengths without duplicating monster IDs or branching on map IDs inside battle logic. A persisted active enemy instance stores its rolled `level`; older active battles normalize safely to Lv.1.
+
+Battle EXP is evaluated per character and per defeated enemy. Only the positive character-over-enemy level difference reduces EXP; there is no high-level-enemy bonus in v0.19.
+
+First-get knowledge remains owned by discovery. UI consumes the queue as one pending batch so multiple simultaneous acquisitions do not create repeated full-screen cards.
 
 ## v0.18 loop boundary
 
@@ -96,4 +106,4 @@ Do not merge these responsibilities. Future recipes, people, places, rumors and 
 
 ## Save compatibility
 
-v0.14 remains the intentional progress compatibility baseline. v0.18 normalizes supported v0.14+ saves and adds expedition archive, quest state, generic knowledge records, recipe unlocks and story flags with safe defaults. Pre-v0.14 progress is intentionally reset while preserving settings.
+v0.14 remains the intentional progress compatibility baseline. v0.19 normalizes supported v0.14+ saves. Enemy levels live on active battle instances; older battle records without a level normalize to Lv.1. Expedition/quest/discovery state from v0.18 remains compatible. Pre-v0.14 progress is intentionally reset while preserving settings.

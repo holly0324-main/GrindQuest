@@ -1,8 +1,8 @@
 # UI
 
-- Document Version: 3
+- Document Version: 4
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -22,7 +22,7 @@ Imports domain APIs/projections directly plus canonical data needed for display.
 
 ## Invariants
 
-Do not duplicate gameplay formulas in UI. UI actions call domain APIs, persist via `onChange`, then rerender. The settings Encyclopedia is the full-data reference. The village Adventure Handbook is discovered-only. Expedition result screens render immutable result snapshots rather than querying current inventory.
+Battle presentation shows each enemy instance Lv. First-get UI consumes the complete pending queue in one overlay when multiple items are acquired together; single-item acquisition keeps the large-card presentation.
 
 ## Extension points
 

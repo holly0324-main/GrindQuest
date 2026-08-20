@@ -49,7 +49,9 @@ export const recordKnowledge=(state,category,id)=>state?.encyclopedia?.knowledge
 export const knownRecords=(state,category)=>Object.entries(state?.encyclopedia?.knowledge?.records?.[category]||{}).filter(([,x])=>x?.known).map(([id,x])=>({id,...x}));
 
 export const nextFirstGet=(state)=>ensureDiscoveryState(state).firstGetQueue[0]||null;
+export const pendingFirstGets=(state)=>[...ensureDiscoveryState(state).firstGetQueue];
 export function dismissFirstGet(state){return ensureDiscoveryState(state).firstGetQueue.shift()||null;}
+export function dismissFirstGets(state){const q=ensureDiscoveryState(state).firstGetQueue;return q.splice(0,q.length);}
 
 export function backfillDiscoveryFromPossessions(state){
   ensureDiscoveryState(state);

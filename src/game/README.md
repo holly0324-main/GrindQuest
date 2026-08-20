@@ -1,12 +1,14 @@
 # Game Domains
 
-- Document Version: 3
+- Document Version: 4
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
 Gameplay implementation organized by responsibility.
+
+v0.19 adds data-driven encounter levels and per-character battle EXP level-difference handling without creating a new gameplay domain.
 
 v0.18 adds:
 

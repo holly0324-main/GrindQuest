@@ -1,8 +1,8 @@
 # Discovery and Knowledge
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -15,7 +15,7 @@ Track what the player knows versus what they have actually obtained/seen. This i
 - item: `learnItem`, `obtainItem`, discovery/acquisition queries
 - monster: `learnMonster`, `seeMonster`, discovery/seen queries
 - generic future knowledge: `learnRecord`, `recordKnowledge`, `knownRecords`
-- first-get queue helpers
+- first-get queue helpers (`nextFirstGet` compatibility plus grouped `pendingFirstGets` / `dismissFirstGets`)
 - migration/backfill initialization
 
 ## Owned state / data
@@ -32,7 +32,7 @@ Static item/monster data, rarity helper and expedition observation hooks. Do not
 
 ## Invariants
 
-Knowledge and actual acquisition/encounter remain separate. Learning never consumes the future first-get event. First acquisition queues exactly one first-get notice. When an expedition is active, a newly learned/obtained/seen fact is also reported to the expedition observer.
+Knowledge and actual acquisition/encounter remain separate. First acquisition queues exactly one record per item. `pendingFirstGets()` / `dismissFirstGets()` let presentation consume simultaneous discoveries as one batch without changing discovery semantics.
 
 ## Extension points
 

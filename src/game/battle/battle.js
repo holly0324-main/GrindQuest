@@ -1,5 +1,5 @@
 import { battleSkills, battleSpells, enemies } from '../../data/index.js';
-import { addExp, characterById, derivedCharacter, partyMembers, setTactic, TACTICS } from '../characters/characters.js';
+import { addExpByCharacter, characterById, derivedCharacter, partyMembers, setTactic, TACTICS } from '../characters/characters.js';
 import { addStack, removeFromStack, stackList } from '../inventory/inventory.js';
 import { seeMonster } from '../discovery/discovery.js';
 import { finalizeExpedition, recordBattleStart, recordEnemyDefeat } from '../expedition/expedition.js';
@@ -8,18 +8,38 @@ import { QUALITY_MULT } from '../shared/constants.js';
 import { clamp, pick, rand } from '../shared/utils.js';
 import { advanceTime, timeMessages } from '../time/clock.js';
 
+const ENEMY_LEVEL_GROWTH={hp:.16,atk:.10,def:.08,agi:.04};
+const enemyLevelInt=v=>Math.max(1,Math.floor(Number(v)||1));
 function encounterCountFor(e,reason){
   if(['boss_symbol','symbol','camp_raid'].includes(reason))return 1;
   if((e.exp||0)<=12)return rand(1,3);
   if((e.exp||0)<=28)return rand(1,2);
   return 1;
 }
-export function makeBattleEnemy(enemyId,index){const e=enemies[enemyId];return{instanceId:`enemy_${index+1}`,enemyId,hp:e.hp,maxHp:e.hp,atk:e.atk,def:e.def,agi:e.agi||8,exp:e.exp};}
-export function syncLegacyBattle(b){const x=(b.enemies||[]).find(e=>e.hp>0)||b.enemies?.[0];if(!x)return;b.enemyId=x.enemyId;b.enemyHp=x.hp;b.enemyMaxHp=x.maxHp;b.enemyAtk=x.atk;b.enemyDef=x.def;b.enemyAgi=x.agi;b.expReward=(b.enemies||[]).reduce((a,e)=>a+(e.exp||0),0);}
+export function rollEnemyLevel(profile={},fixed=null){
+  if(fixed!=null&&Number.isFinite(Number(fixed)))return enemyLevelInt(fixed);
+  const min=enemyLevelInt(profile?.min||1),max=Math.max(min,enemyLevelInt(profile?.max||min)),rareMax=Math.max(max,enemyLevelInt(profile?.rareMax||max)),rareChance=clamp(Number(profile?.rareChance)||0,0,1);
+  if(rareMax>max&&Math.random()<rareChance)return rand(max+1,rareMax);
+  return rand(min,max);
+}
+export function enemyStatsAtLevel(enemyId,level=null){
+  const e=enemies[enemyId];if(!e)return null;const baseLevel=enemyLevelInt(e.baseLevel||1),lv=enemyLevelInt(level??baseLevel),delta=Math.max(0,lv-baseLevel);
+  const hp=Math.max(1,Math.round(e.hp*(1+ENEMY_LEVEL_GROWTH.hp*delta)));
+  const atk=Math.max(1,e.atk+delta,Math.round(e.atk*(1+ENEMY_LEVEL_GROWTH.atk*delta)));
+  const def=Math.max(0,e.def+Math.floor((delta+1)/2),Math.round(e.def*(1+ENEMY_LEVEL_GROWTH.def*delta)));
+  const agi=Math.max(1,(e.agi||8)+Math.floor(delta/2),Math.round((e.agi||8)*(1+ENEMY_LEVEL_GROWTH.agi*delta)));
+  const exp=Math.max(1,Math.floor(e.exp||1));
+  return{level:lv,baseLevel,hp,atk,def,agi,exp};
+}
+export function makeBattleEnemy(enemyId,index,level=null){const e=enemies[enemyId],st=enemyStatsAtLevel(enemyId,level);if(!e||!st)return null;return{instanceId:`enemy_${index+1}`,enemyId,level:st.level,hp:st.hp,maxHp:st.hp,atk:st.atk,def:st.def,agi:st.agi,exp:st.exp};}
+export function battleExpMultiplier(characterLevel,enemyLevel){const diff=Math.max(0,enemyLevelInt(characterLevel)-enemyLevelInt(enemyLevel));return Math.max(0,1-diff*.10);}
+export function battleExpForCharacter(enemyInstance,characterLevel){if(!enemyInstance)return 0;return Math.max(0,Math.floor((Number(enemyInstance.exp)||0)*battleExpMultiplier(characterLevel,enemyInstance.level||1)));}
+export function battleExpRewards(state,battleEnemies=[]){const out={};for(const c of partyMembers(state)){out[c.id]=(battleEnemies||[]).reduce((sum,e)=>sum+battleExpForCharacter(e,c.level),0);}return out;}
+export function syncLegacyBattle(b){const x=(b.enemies||[]).find(e=>e.hp>0)||b.enemies?.[0];if(!x)return;b.enemyId=x.enemyId;b.enemyLevel=x.level||1;b.enemyHp=x.hp;b.enemyMaxHp=x.maxHp;b.enemyAtk=x.atk;b.enemyDef=x.def;b.enemyAgi=x.agi;b.expReward=(b.enemies||[]).reduce((a,e)=>a+(e.exp||0),0);}
 export function beginEncounter(state,enemyId,reason='encounter',meta={}){
   const e=enemies[enemyId];if(!e)return false;
-  const count=meta.count||encounterCountFor(e,reason),pool=Array.isArray(meta.groupPool)&&meta.groupPool.length?meta.groupPool:[enemyId],group=Array.from({length:count},(_,i)=>makeBattleEnemy(i===0?enemyId:pick(pool),i));
-  state.battle={enemies:group,over:false,won:false,escaped:false,turn:1,escapeAttempts:0,reason,guards:{},pending:{},...meta,log:[`${e.name}${count>1?`たち ×${count}`:''}が あらわれた！`]};
+  const count=meta.count||encounterCountFor(e,reason),pool=Array.isArray(meta.groupPool)&&meta.groupPool.length?meta.groupPool:[enemyId],group=Array.from({length:count},(_,i)=>{const id=i===0?enemyId:pick(pool),level=rollEnemyLevel(meta.levelProfile||{},meta.enemyLevel);return makeBattleEnemy(id,i,level);}).filter(Boolean);
+  state.battle={enemies:group,over:false,won:false,escaped:false,turn:1,escapeAttempts:0,reason,guards:{},pending:{},...meta,log:[`${e.name}${count>1?`たち ×${count}`:` Lv.${group[0]?.level||1}`}が あらわれた！`]};
   recordBattleStart(state);for(const foe of group)seeMonster(state,foe.enemyId,'encounter');
   syncLegacyBattle(state.battle);return true;
 }
@@ -28,10 +48,10 @@ function finishBattleTurn(state,b){const t=advanceTime(state,1);b.turn++;b.pendi
 export function battleItemStacks(state){return stackList(state,'bag').filter(s=>allDefs(s.id)?.consumable&&['fresh_herb','potion','honey_drop'].includes(s.id));}
 export function battleSkillList(){return Object.values(battleSkills);}
 export function battleSpellList(){return Object.values(battleSpells);}
-export function ensureBattleShape(state){const b=state.battle;if(!b)return null;b.pending=b.pending||{};b.guards=b.guards||{};if(!Array.isArray(b.enemies)||!b.enemies.length){if(b.enemyId&&enemies[b.enemyId])b.enemies=[{...makeBattleEnemy(b.enemyId,0),hp:Number.isFinite(b.enemyHp)?b.enemyHp:enemies[b.enemyId].hp,maxHp:Number.isFinite(b.enemyMaxHp)?b.enemyMaxHp:enemies[b.enemyId].hp,atk:Number.isFinite(b.enemyAtk)?b.enemyAtk:enemies[b.enemyId].atk,def:Number.isFinite(b.enemyDef)?b.enemyDef:enemies[b.enemyId].def,agi:Number.isFinite(b.enemyAgi)?b.enemyAgi:(enemies[b.enemyId].agi||8)}];else b.enemies=[];}syncLegacyBattle(b);return b;}
+export function ensureBattleShape(state){const b=state.battle;if(!b)return null;b.pending=b.pending||{};b.guards=b.guards||{};if(Array.isArray(b.enemies)&&b.enemies.length)b.enemies=b.enemies.map((x,i)=>Number.isFinite(Number(x.level))?x:{...makeBattleEnemy(x.enemyId,i,1),...x,level:1});else if(b.enemyId&&enemies[b.enemyId])b.enemies=[{...makeBattleEnemy(b.enemyId,0,b.enemyLevel||1),hp:Number.isFinite(b.enemyHp)?b.enemyHp:enemies[b.enemyId].hp,maxHp:Number.isFinite(b.enemyMaxHp)?b.enemyMaxHp:enemies[b.enemyId].hp,atk:Number.isFinite(b.enemyAtk)?b.enemyAtk:enemies[b.enemyId].atk,def:Number.isFinite(b.enemyDef)?b.enemyDef:enemies[b.enemyId].def,agi:Number.isFinite(b.enemyAgi)?b.enemyAgi:(enemies[b.enemyId].agi||8)}];else b.enemies=[];syncLegacyBattle(b);return b;}
 export function livingEnemies(state){const b=ensureBattleShape(state);return(b?.enemies||[]).filter(e=>e.hp>0);}
 export function battleCurrentActor(state){if(!state.battle||state.battle.over)return null;return partyMembers(state,{living:true}).find(c=>(c.tactic||'manual')==='manual'&&!state.battle.pending?.[c.id])||null;}
-function enemyLabel(b,target){const same=(b.enemies||[]).filter(x=>x.enemyId===target.enemyId);if(same.length<=1)return enemies[target.enemyId]?.name||'魔物';const idx=same.indexOf(target);return`${enemies[target.enemyId]?.name||'魔物'} ${String.fromCharCode(65+idx)}`;}
+function enemyLabel(b,target){const same=(b.enemies||[]).filter(x=>x.enemyId===target.enemyId),name=enemies[target.enemyId]?.name||'魔物',suffix=same.length<=1?'':` ${String.fromCharCode(65+same.indexOf(target))}`;return`${name}${suffix} Lv.${target.level||1}`;}
 function chooseEnemyTarget(state,payload={}){const alive=livingEnemies(state);return alive.find(x=>x.instanceId===payload.targetId)||alive[0]||null;}
 function choosePartyTarget(state,payload={},fallback=null){const alive=partyMembers(state,{living:true});return alive.find(c=>c.id===payload.targetId)||fallback||alive[0]||null;}
 function markEnemyDefeated(state,target){if(!target||target.hp>0||target.defeatRecorded)return false;const e=enemies[target.enemyId];if(!e)return false;target.defeatRecorded=true;state.encyclopedia=state.encyclopedia||{kills:{}};state.encyclopedia.kills=state.encyclopedia.kills||{};state.encyclopedia.kills[e.id]=(state.encyclopedia.kills[e.id]||0)+1;recordEnemyDefeat(state,e.id,1);return true;}
@@ -56,10 +76,10 @@ function dropQuality(e,id){const def=allDefs(id),base=e.exp>=70?.65:e.exp>=35?.3
 function victory(state){
   const b=state.battle; b.over=true;b.won=true;
   state.encyclopedia=state.encyclopedia||{kills:{}};state.encyclopedia.kills=state.encyclopedia.kills||{};
-  let totalExp=0;const drops=[],lost=[];
-  for(const be of b.enemies||[]){const e=enemies[be.enemyId];if(!e)continue;markEnemyDefeated(state,be);totalExp+=e.exp||0;for(let i=0;i<rollSlots(e);i++){const d=rollLoot(e);if(!d)continue;const q=dropQuality(e,d.id),a=addStack(state,d.id,d.count,{quality:q,container:'bag'});if(a)drops.push(`${allDefs(d.id).name}${qualityLabel(q)}×${a}`);if(a<d.count)lost.push(`${allDefs(d.id).name}×${d.count-a}`);}}
+  const drops=[],lost=[];
+  for(const be of b.enemies||[]){const e=enemies[be.enemyId];if(!e)continue;markEnemyDefeated(state,be);for(let i=0;i<rollSlots(e);i++){const d=rollLoot(e);if(!d)continue;const q=dropQuality(e,d.id),a=addStack(state,d.id,d.count,{quality:q,container:'bag'});if(a)drops.push(`${allDefs(d.id).name}${qualityLabel(q)}×${a}`);if(a<d.count)lost.push(`${allDefs(d.id).name}×${d.count-a}`);}}
   if(b.symbolKey){if(b.bossSymbol){state.worldState=state.worldState||{bossDefeatedAt:{}};state.worldState.bossDefeatedAt=state.worldState.bossDefeatedAt||{};state.worldState.bossDefeatedAt[b.symbolKey]=state.calendar.totalSteps;}else if(state.run&&!state.run.defeatedSymbols.includes(b.symbolKey))state.run.defeatedSymbols.push(b.symbolKey);}
-  const xp=addExp(state,totalExp,'戦闘');pushBattle(b,`魔物の群れを たおした！ ${xp.msg}`);if(drops.length)pushBattle(b,`戦利品: ${drops.join(' / ')}`);if(lost.length)pushBattle(b,`バッグに入らず置いてきた: ${lost.join(' / ')}`);return{xp,drops,lost};
+  const rewards=battleExpRewards(state,b.enemies||[]),xp=addExpByCharacter(state,rewards,'戦闘');pushBattle(b,`魔物の群れを たおした！ ${xp.msg}`);if(drops.length)pushBattle(b,`戦利品: ${drops.join(' / ')}`);if(lost.length)pushBattle(b,`バッグに入らず置いてきた: ${lost.join(' / ')}`);return{xp,drops,lost};
 }
 function allPartyDown(state){return partyMembers(state).every(c=>c.hp<=0);}
 function autoCommandFor(state,c){

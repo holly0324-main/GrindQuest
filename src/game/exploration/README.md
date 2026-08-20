@@ -1,8 +1,8 @@
 # Exploration
 
-- Document Version: 2
+- Document Version: 3
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -22,7 +22,7 @@ World data, battle encounter entry, inventory, characters, discovery generic pla
 
 ## Invariants
 
-Movement/resource actions advance time only through clock APIs. Gathering may defer encounter resolution until the minigame animation finishes. Returning to town finalizes the expedition result **before** clearing `state.run`. Result content is never reconstructed from the post-return bag.
+Movement/resource actions advance time only through clock APIs. Encounter calls pass the zone/local/node enemy-level profile into battle rather than choosing level rules inside battle from map IDs. Gathering may defer encounter resolution until the minigame animation finishes.
 
 ## Extension points
 

@@ -2,24 +2,24 @@
 // type='field' は採集・寄り道主体、type='dungeon' は階層・シンボル・ボスを持てる迷宮型。
 const LE=(a,b,steps=null)=>({a,b,steps});
 export const localAreas={
-  iron_echo_quarry:{id:'iron_echo_quarry',name:'鉄鳴り採掘場',type:'field',typeName:'フィールド',entryWorld:'quarry',entry:'gate',zone:'mountain',moveSteps:0,encounter:.10,encounterOnMove:false,desc:'露天掘りの斜面を歩き、露出した鉱脈を掘って回る。',nodes:{
+  iron_echo_quarry:{id:'iron_echo_quarry',name:'鉄鳴り採掘場',type:'field',typeName:'フィールド',entryWorld:'quarry',entry:'gate',zone:'mountain',enemyLevels:{min:2,max:4,rareMax:5,rareChance:.08},moveSteps:0,encounter:.10,encounterOnMove:false,desc:'露天掘りの斜面を歩き、露出した鉱脈を掘って回る。',nodes:{
     gate:{id:'gate',name:'採掘場入口',icon:'🚧',x:18,y:72,desc:'採石道へ戻れる入口。'},
     west_vein:{id:'west_vein',name:'西鉱脈',icon:'⛏️',x:42,y:48,desc:'鉄の筋が太く走る岩壁。',resource:'mining',resourceDifficulty:2,resourceUses:3},
     scree:{id:'scree',name:'崩石棚',icon:'🪨',x:64,y:72,desc:'崩れた石の間にも鉱石が見える。',resource:'mining',resourceDifficulty:2,resourceUses:2},
     deep_vein:{id:'deep_vein',name:'奥鉱脈',icon:'💎',x:80,y:35,desc:'少し質の良い鉱石が混じる奥の壁。',resource:'mining',resourceDifficulty:3,resourceUses:2}
   },edges:[LE('gate','west_vein',0),LE('west_vein','scree',0),LE('scree','deep_vein',0),LE('west_vein','deep_vein',0)]},
-  mirror_lake_shore:{id:'mirror_lake_shore',name:'碧鏡の湖畔',type:'field',typeName:'フィールド',entryWorld:'lakeside',entry:'landing',zone:'river',moveSteps:0,encounter:.08,encounterOnMove:false,desc:'森湖の岸辺。魚影を追って静かに場所を変えられる。',nodes:{
+  mirror_lake_shore:{id:'mirror_lake_shore',name:'碧鏡の湖畔',type:'field',typeName:'フィールド',entryWorld:'lakeside',entry:'landing',zone:'river',enemyLevels:{min:1,max:3},moveSteps:0,encounter:.08,encounterOnMove:false,desc:'森湖の岸辺。魚影を追って静かに場所を変えられる。',nodes:{
     landing:{id:'landing',name:'湖畔入口',icon:'🏞️',x:18,y:68,desc:'外の森湖へ戻る岸辺。'},
     reed_point:{id:'reed_point',name:'葦際',icon:'🌾',x:44,y:42,desc:'小魚が集まる葦の際。',resource:'fishing',resourceDifficulty:2,resourceUses:3},
     stone_point:{id:'stone_point',name:'石棚',icon:'🎣',x:68,y:65,desc:'足場の良い釣り場。',resource:'fishing',resourceDifficulty:2,resourceUses:3},
     blue_depth:{id:'blue_depth',name:'青淵',icon:'🌊',x:82,y:28,desc:'大きな魚影が見える深み。',resource:'fishing',resourceDifficulty:3,resourceUses:2}
   },edges:[LE('landing','reed_point',0),LE('reed_point','stone_point',0),LE('stone_point','blue_depth',0),LE('reed_point','blue_depth',0)]},
-  glimmer_cave:{id:'glimmer_cave',name:'薄明の晶洞',type:'field',typeName:'フィールド',entryWorld:'hidden_cave',entry:'mouth',zone:'mountain',moveSteps:1,encounter:.20,encounterOnMove:true,desc:'洞穴の奥に小さな晶石棚が点在する寄り道向けの洞窟。',nodes:{
+  glimmer_cave:{id:'glimmer_cave',name:'薄明の晶洞',type:'field',typeName:'フィールド',entryWorld:'hidden_cave',entry:'mouth',zone:'mountain',enemyLevels:{min:2,max:4,rareMax:5,rareChance:.10},moveSteps:1,encounter:.20,encounterOnMove:true,desc:'洞穴の奥に小さな晶石棚が点在する寄り道向けの洞窟。',nodes:{
     mouth:{id:'mouth',name:'洞口',icon:'🕳️',x:18,y:70,desc:'外の崩れかけの洞穴へ戻れる。'},
     shard_floor:{id:'shard_floor',name:'晶片床',icon:'💠',x:47,y:56,desc:'足元に欠片が散っている。',resource:'mining',resourceDifficulty:3,resourceUses:2},
     blue_wall:{id:'blue_wall',name:'青晶壁',icon:'💎',x:76,y:34,desc:'魔力を帯びた晶石が見える。',resource:'mining',resourceDifficulty:4,resourceUses:2}
   },edges:[LE('mouth','shard_floor',1),LE('shard_floor','blue_wall',1)]},
-  old_mine_upper:{id:'old_mine_upper',name:'旧鉱山・上層坑道',type:'dungeon',typeName:'ダンジョン',entryWorld:'mine_entrance',entry:'gate',zone:'mountain',moveSteps:1,encounter:.25,encounterOnMove:true,desc:'放棄された坑道。横穴と採掘跡が複雑につながる。',nodes:{
+  old_mine_upper:{id:'old_mine_upper',name:'旧鉱山・上層坑道',type:'dungeon',typeName:'ダンジョン',entryWorld:'mine_entrance',entry:'gate',zone:'mountain',enemyLevels:{min:3,max:4,rareMax:5,rareChance:.12},moveSteps:1,encounter:.25,encounterOnMove:true,desc:'放棄された坑道。横穴と採掘跡が複雑につながる。',nodes:{
     gate:{id:'gate',name:'坑道口',icon:'🚪',x:12,y:72,desc:'旧鉱山入口へ戻れる。'},
     fork:{id:'fork',name:'三叉坑',icon:'↗️',x:34,y:55,desc:'古い支柱が残る分岐。'},
     iron_face:{id:'iron_face',name:'鉄壁面',icon:'⛏️',x:55,y:76,desc:'掘り残された鉄鉱脈。',resource:'mining',resourceDifficulty:2,resourceUses:2},
@@ -27,15 +27,15 @@ export const localAreas={
     rest_niche:{id:'rest_niche',name:'作業員の窪み',icon:'🕯️',x:77,y:62,desc:'風が弱く、短い休息には向く。',campSafety:'semi'},
     lower_lift:{id:'lower_lift',name:'崩れた昇降路',icon:'⬇️',x:88,y:30,desc:'下層坑道へ続く梯子が残っている。',transition:{areaId:'old_mine_lower',nodeId:'lift',label:'下層へ移動'}}
   },edges:[LE('gate','fork',1),LE('fork','iron_face',1),LE('fork','old_cart',1),LE('iron_face','rest_niche',1),LE('old_cart','rest_niche',1),LE('rest_niche','lower_lift',1)]},
-  old_mine_lower:{id:'old_mine_lower',name:'旧鉱山・深部採掘区',type:'dungeon',typeName:'ダンジョン',entry:null,entryWorld:null,zone:'mountain',moveSteps:1,encounter:.31,encounterOnMove:true,desc:'湿った深部。魔物と鉱脈の気配が濃い。',nodes:{
+  old_mine_lower:{id:'old_mine_lower',name:'旧鉱山・深部採掘区',type:'dungeon',typeName:'ダンジョン',entry:null,entryWorld:null,zone:'mountain',enemyLevels:{min:4,max:4,rareMax:5,rareChance:.25},moveSteps:1,encounter:.31,encounterOnMove:true,desc:'湿った深部。魔物と鉱脈の気配が濃い。',nodes:{
     lift:{id:'lift',name:'昇降路下',icon:'⬆️',x:12,y:72,desc:'上層坑道へ戻れる。',transition:{areaId:'old_mine_upper',nodeId:'lower_lift',label:'上層へ移動'}},
     wet_tunnel:{id:'wet_tunnel',name:'湿り坑',icon:'💧',x:34,y:50,desc:'足元に水が溜まる細い坑道。'},
     crystal_pocket:{id:'crystal_pocket',name:'晶石溜まり',icon:'💎',x:55,y:72,desc:'魔結晶がわずかに混じる鉱脈。',resource:'mining',resourceDifficulty:4,resourceUses:2},
     guard_post:{id:'guard_post',name:'崩落広間',icon:'🗿',x:58,y:35,desc:'大きな影が道を塞いでいる。',symbolEnemy:'golem'},
     deep_rest:{id:'deep_rest',name:'古い休憩所',icon:'🕯️',x:76,y:53,desc:'落盤を免れた小部屋。',campSafety:'semi'},
-    boss_chamber:{id:'boss_chamber',name:'鉱脈心室',icon:'👑',x:88,y:22,desc:'鉱脈に融合した巨体が眠る最奥。',bossEnemy:'ore_golem',bossRespawn:300}
+    boss_chamber:{id:'boss_chamber',name:'鉱脈心室',icon:'👑',x:88,y:22,desc:'鉱脈に融合した巨体が眠る最奥。',bossEnemy:'ore_golem',enemyLevel:5,bossRespawn:300}
   },edges:[LE('lift','wet_tunnel',1),LE('wet_tunnel','crystal_pocket',1),LE('wet_tunnel','guard_post',1),LE('crystal_pocket','deep_rest',1),LE('guard_post','deep_rest',1),LE('deep_rest','boss_chamber',1)]},
-  ashen_ruins_outer:{id:'ashen_ruins_outer',name:'灰冠遺跡・外郭',type:'dungeon',typeName:'ダンジョン',entryWorld:'old_ruins',entry:'breach',zone:'ruins',moveSteps:1,encounter:.28,encounterOnMove:true,desc:'風化した外壁の内側。崩れた部屋が迷路のようにつながる。',nodes:{
+  ashen_ruins_outer:{id:'ashen_ruins_outer',name:'灰冠遺跡・外郭',type:'dungeon',typeName:'ダンジョン',entryWorld:'old_ruins',entry:'breach',zone:'ruins',enemyLevels:{min:3,max:4,rareMax:5,rareChance:.18},moveSteps:1,encounter:.28,encounterOnMove:true,desc:'風化した外壁の内側。崩れた部屋が迷路のようにつながる。',nodes:{
     breach:{id:'breach',name:'崩れ口',icon:'🏛️',x:10,y:74,desc:'外の風化した遺跡へ戻れる。'},
     courtyard:{id:'courtyard',name:'沈んだ中庭',icon:'🪨',x:31,y:56,desc:'石床の隙間から草が伸びる。',resource:'herb',resourceDifficulty:3,resourceUses:2},
     archive:{id:'archive',name:'崩れ書庫',icon:'📜',x:53,y:74,desc:'古代の欠片が散る小部屋。'},
@@ -43,13 +43,13 @@ export const localAreas={
     altar:{id:'altar',name:'灰の祭壇',icon:'🕯️',x:75,y:57,desc:'静かだが安全とは言い切れない。',campSafety:'semi'},
     gallery_gate:{id:'gallery_gate',name:'回廊門',icon:'🚪',x:89,y:30,desc:'封じられた回廊へ続く。',transition:{areaId:'sealed_gallery',nodeId:'west_door',label:'回廊へ移動'}}
   },edges:[LE('breach','courtyard',1),LE('courtyard','archive',1),LE('courtyard','watcher',1),LE('archive','altar',1),LE('watcher','altar',1),LE('altar','gallery_gate',1)]},
-  sealed_gallery:{id:'sealed_gallery',name:'封印回廊・深殿',type:'dungeon',typeName:'ダンジョン',entryWorld:'sealed_hall',entry:'east_door',zone:'ruins',moveSteps:1,encounter:.34,encounterOnMove:true,desc:'半地下の長い回廊と大広間。奥には復活する守護者がいる。',nodes:{
+  sealed_gallery:{id:'sealed_gallery',name:'封印回廊・深殿',type:'dungeon',typeName:'ダンジョン',entryWorld:'sealed_hall',entry:'east_door',zone:'ruins',enemyLevels:{min:4,max:4,rareMax:5,rareChance:.30},moveSteps:1,encounter:.34,encounterOnMove:true,desc:'半地下の長い回廊と大広間。奥には復活する守護者がいる。',nodes:{
     west_door:{id:'west_door',name:'西回廊口',icon:'↩️',x:12,y:72,desc:'灰冠遺跡の外郭へ戻れる。',transition:{areaId:'ashen_ruins_outer',nodeId:'gallery_gate',label:'外郭へ移動'}},
     east_door:{id:'east_door',name:'東回廊口',icon:'🚪',x:20,y:35,desc:'外の封じられた回廊へ戻れる。'},
     long_hall:{id:'long_hall',name:'長回廊',icon:'🏛️',x:42,y:54,desc:'足音が長く反響する。'},
     side_room:{id:'side_room',name:'副室',icon:'🏺',x:58,y:76,desc:'石箱の残骸が散る。'},
     sentry:{id:'sentry',name:'巡回区画',icon:'💀',x:62,y:36,desc:'骸骨が回廊を徘徊している。',symbolEnemy:'skeleton'},
     great_hall:{id:'great_hall',name:'大広間',icon:'🏰',x:79,y:55,desc:'天井の高い広間。魔物の気配が濃い。'},
-    boss_sanctum:{id:'boss_sanctum',name:'灰冠の最奥殿',icon:'👑',x:90,y:24,desc:'守護者の核が定期的に再生する。',bossEnemy:'relic_warden',bossRespawn:360}
+    boss_sanctum:{id:'boss_sanctum',name:'灰冠の最奥殿',icon:'👑',x:90,y:24,desc:'守護者の核が定期的に再生する。',bossEnemy:'relic_warden',enemyLevel:5,bossRespawn:360}
   },edges:[LE('west_door','long_hall',1),LE('east_door','long_hall',1),LE('long_hall','side_room',1),LE('long_hall','sentry',1),LE('side_room','great_hall',1),LE('sentry','great_hall',1),LE('great_hall','boss_sanctum',1)]}
 };

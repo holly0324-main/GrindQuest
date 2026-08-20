@@ -1,8 +1,8 @@
 # State Composition and Normalization
 
-- Document Version: 3
+- Document Version: 4
 - Architecture Baseline: v0.16
-- Last Architecture Change: v0.18
+- Last Architecture Change: v0.19
 
 ## Responsibility
 
@@ -22,7 +22,7 @@ Low-level domains needed to construct/normalize state, including discovery, expe
 
 ## Invariants
 
-v0.14 remains the progress compatibility baseline. Current version is 18. Existing possessions/kills are silently backfilled into discovery without generating first-get spam. v0.18 safely initializes:
+v0.14 remains the progress compatibility baseline. Current version is 19. Existing possessions/kills are silently backfilled into discovery without generating first-get spam. v0.18+ state remains compatible; v0.19 additionally normalizes active battle enemies without a stored level to Lv.1. Existing v0.18 fields include:
 
 - `state.expeditions`
 - `state.quests`

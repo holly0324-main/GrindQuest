@@ -14,7 +14,7 @@ export function defaultState(){
   const hero=makeCharacter('hero','冒険者','冒険者',{},{weapon:'gear_1',body:'gear_2',legs:'gear_3',feet:'gear_4'},{recruited:true,growthTreeId:'hero_adventurer'});
   const boris=makeCharacter('boris','ガルド','戦士',{vitality:52,strength:10,agility:6,magic:4,wisdom:5,knowledge:5,dexterity:6},{},{recruited:false,growthTreeId:'warrior_gald'});
   const state={
-  version:18,characters:{hero,boris},party:['hero'],
+  version:19,characters:{hero,boris},party:['hero'],
   gold:80,backpack:'cheap',consumables:{camp_set:0},
   gear:starterGear(),nextGearId:5,ownedItems:{},inventory:{},
   itemStacks:[{stackId:'stk_1',id:'potion',count:1,quality:0,container:'bag',remainingLife:1200,lastAgedStep:0}],nextStackId:2,
@@ -33,7 +33,7 @@ export function normalize(state){
     base.settings={...base.settings,...(old.settings||{})};
     return base;
   }
-  const s={...base,...old,version:18};
+  const s={...base,...old,version:19};
   s.calendar={...base.calendar,...(old.calendar||{})};
   if(!Number.isFinite(s.calendar.totalSteps))s.calendar.totalSteps=Math.max(0,(Math.max(1,s.calendar.day||1)-1)*DAY_STEPS+(s.calendar.stepOfDay||0));
   s.calendar.day=Math.floor(s.calendar.totalSteps/DAY_STEPS)+1;s.calendar.stepOfDay=s.calendar.totalSteps%DAY_STEPS;
