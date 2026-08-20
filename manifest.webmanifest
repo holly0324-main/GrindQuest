@@ -1,7 +1,7 @@
 {
   "name": "GrindQuest - フィールド探索RPG",
   "short_name": "GrindQuest",
-  "description": "村の周辺を探索し、戦闘・採集・レア度・品質・鍛冶・調合を管理するスマホ向け探索PWA",
+  "description": "最大4人パーティで村周辺を探索し、複数敵とのコマンド戦闘・採集・鍛冶・調合を楽しむスマホ向け探索PWA",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
