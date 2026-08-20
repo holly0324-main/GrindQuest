@@ -1,0 +1,31 @@
+export const items = {
+  novice_sword:{id:'novice_sword',name:'旅立ちの剣',slot:'weapon',icon:'🗡️',rank:0,atk:3,def:0,hp:0,mp:0,price:28,desc:'まだ頼りないが、手になじむ剣。'},
+  wooden_staff:{id:'wooden_staff',name:'樫の杖',slot:'weapon',icon:'🪄',rank:0,atk:2,def:0,hp:0,mp:4,price:30,desc:'森の木から削り出した簡素な杖。'},
+  hunting_knife:{id:'hunting_knife',name:'狩人のナイフ',slot:'weapon',icon:'🔪',rank:1,atk:6,def:0,hp:0,mp:0,price:95,desc:'獣の解体にも使える軽い刃。'},
+  iron_sword:{id:'iron_sword',name:'鉄の剣',slot:'weapon',icon:'⚔️',rank:1,atk:8,def:0,hp:0,mp:0,price:130,desc:'鉄鉱石を鍛えて作った堅実な剣。'},
+  iron_spear:{id:'iron_spear',name:'鉄の槍',slot:'weapon',icon:'🔱',rank:1,atk:9,def:0,hp:0,mp:0,price:145,desc:'間合いを取りやすい鉄製の槍。'},
+  fang_blade:{id:'fang_blade',name:'獣牙の剣',slot:'weapon',icon:'🦷',rank:1,atk:12,def:0,hp:3,mp:0,price:190,desc:'魔獣の牙を芯材にした荒々しい剣。'},
+  oak_staff:{id:'oak_staff',name:'堅木の杖',slot:'weapon',icon:'🌳',rank:1,atk:5,def:0,hp:0,mp:9,price:175,desc:'堅木と魔力粉を合わせた術者用の杖。'},
+  mountain_axe:{id:'mountain_axe',name:'山割りの斧',slot:'weapon',icon:'🪓',rank:2,atk:17,def:0,hp:4,mp:0,price:390,desc:'山の鉱石を厚く打ち出した重い斧。'},
+  crystal_sword:{id:'crystal_sword',name:'晶鉄の剣',slot:'weapon',icon:'💠',rank:2,atk:18,def:0,hp:0,mp:4,price:430,desc:'魔結晶を混ぜ込んだ青白い刃。'},
+  flame_blade:{id:'flame_blade',name:'炎晶剣',slot:'weapon',icon:'🔥',rank:2,atk:20,def:0,hp:0,mp:5,price:480,desc:'炎晶石を封じた現在地帯の上位武器。'},
+
+  travel_clothes:{id:'travel_clothes',name:'旅人の服',slot:'body',icon:'🥋',rank:0,atk:0,def:2,hp:0,mp:0,price:22,desc:'動きやすさ重視の普段着。'},
+  leather_armor:{id:'leather_armor',name:'皮のよろい',slot:'body',icon:'🛡️',rank:1,atk:0,def:5,hp:5,mp:0,price:120,desc:'獣皮で補強した軽鎧。'},
+  chain_mail:{id:'chain_mail',name:'鎖かたびら',slot:'body',icon:'⛓️',rank:1,atk:0,def:8,hp:8,mp:0,price:180,desc:'鉄輪を編んだ本格防具。'},
+  mystic_robe:{id:'mystic_robe',name:'魔力のローブ',slot:'body',icon:'🪄',rank:2,atk:0,def:7,hp:0,mp:12,price:380,desc:'魔結晶の力でMPを増幅する。'},
+  scale_mail:{id:'scale_mail',name:'岩鱗のよろい',slot:'body',icon:'🦎',rank:2,atk:0,def:11,hp:10,mp:0,price:420,desc:'岩トカゲの鱗を重ねた硬い鎧。'},
+  iron_shield:{id:'iron_shield',name:'鉄の盾',slot:'shield',icon:'🛡️',rank:1,atk:0,def:4,hp:3,mp:0,price:120,desc:'小型だが頑丈な鉄盾。'},
+  bone_shield:{id:'bone_shield',name:'骨張りの盾',slot:'shield',icon:'🦴',rank:1,atk:0,def:5,hp:0,mp:0,price:130,desc:'骨材で軽く補強した盾。'},
+  fur_cap:{id:'fur_cap',name:'獣毛の帽子',slot:'head',icon:'🧢',rank:1,atk:0,def:2,hp:4,mp:0,price:85,desc:'夜の森でも暖かい帽子。'},
+  iron_helm:{id:'iron_helm',name:'鉄かぶと',slot:'head',icon:'⛑️',rank:2,atk:0,def:5,hp:4,mp:0,price:220,desc:'鉱山向けの厚い兜。'},
+  leather_gloves:{id:'leather_gloves',name:'皮の手袋',slot:'arms',icon:'🧤',rank:1,atk:0,def:1,hp:0,mp:0,price:70,desc:'手元を守る丈夫な手袋。'},
+  iron_gauntlets:{id:'iron_gauntlets',name:'鉄のこて',slot:'arms',icon:'🥊',rank:2,atk:1,def:4,hp:0,mp:0,price:210,desc:'重いが手首まで守る鉄製のこて。'},
+  travel_pants:{id:'travel_pants',name:'旅人のズボン',slot:'legs',icon:'👖',rank:0,atk:0,def:1,hp:0,mp:0,price:24,desc:'丈夫な普段着。'},
+  wolf_pants:{id:'wolf_pants',name:'狼皮のズボン',slot:'legs',icon:'🐺',rank:1,atk:0,def:3,hp:4,mp:0,price:105,desc:'柔らかい狼皮を重ねた防寒具。'},
+  travel_boots:{id:'travel_boots',name:'旅人の靴',slot:'feet',icon:'🥾',rank:0,atk:0,def:1,hp:0,mp:0,price:25,desc:'長く歩くための革靴。'},
+  mountain_boots:{id:'mountain_boots',name:'山歩きの靴',slot:'feet',icon:'🥾',rank:1,atk:0,def:2,hp:3,mp:0,price:120,desc:'滑りにくい山道用の靴。'},
+  fang_charm:{id:'fang_charm',name:'牙のお守り',slot:'accessory',icon:'📿',rank:1,atk:2,def:0,hp:2,mp:0,price:140,desc:'魔獣の牙を磨いた護符。'},
+  relic_charm:{id:'relic_charm',name:'古跡のお守り',slot:'accessory',icon:'🏺',rank:2,atk:0,def:2,hp:0,mp:8,price:360,desc:'古代の欠片から作った不思議な護符。'}
+};
+

@@ -1,29 +1,38 @@
+import { EQUIPMENT_SLOTS, FRESH_STORAGE_UPGRADES, ITEM_TAGS, STORAGE_UPGRADES, WORKMANSHIP_NAMES } from '../game/shared/constants.js';
+import { alchemyRecipes, backpacks, consumables, enemies, items, localAreas, materials, recipes, worldEdges, worldNodes } from '../data/index.js';
+import { rarityOf } from '../game/items/catalog.js';
 import {
-  EQUIPMENT_SLOTS, FRESH_STORAGE_UPGRADES, STORAGE_UPGRADES, adjacentNodes, alchemyRecipeProduct, alchemyRecipes, backpackCapacity, backpacks, battleItemStacks,
-  alchemyMaxBatch, beginManualAlchemy, battleSkillList, battleSpellList, buyConsumable, camp, campStatus, canAlchemy, canCraft, completeManualAlchemy,
-  allocateParameterPoint, battleCurrentActor, characterById, collectForgeOrder, command, consumables, currentLocation, defeatReturn, derived, derivedCharacter, enemies, equip,
-  equipmentList, expToNext, finishBattle, forgeOrders, forgeRecipeProduct, gearById, gearDisplayName, gearStats, harvestResult,
-  ITEM_TAGS, items, itemBookEntries, itemBookEntry, lifeSkillInfo, localAdjacentNodes, localAreaEntry, localAreaType, localAreas, localMove, localPatrol, materialCount, materials, monsterBookEntries, monsterBookEntry, orderCraft, patrol, phaseInfo, rarityOf, recipeRequirements, recipes,
-  areaTransitionStatus, bossStatus, currentLocalArea, currentPlace, enterLocalArea, leaveLocalArea, resourceStatus, resolveGatherEncounter, restAtTown, sellAll, sellAllValuables, sellEquipment, sellStack, selfCraft, sleepDuration,
-  simpleAlchemy, stackCount, stackDefinition, stackList, stackQualityLabel, stackRemaining, startExpedition, transferStack,
-  travelTo, upgradeBackpack, upgradeFreshWarehouse, upgradeWarehouse, useAreaTransition, useFieldItem, useRura, usedCapacity, usedFreshStorageCapacity, usedStorageCapacity,
-  freshWarehouseCapacity, warehouseCapacity, warehouseGroups, WORKMANSHIP_NAMES, worldEdges, worldNodes,
-  partyMembers, recruitableCharacters, togglePartyMember, setTactic, TACTICS, PARAMETER_LABELS, livingEnemies
-} from '../core/game.js';
+  backpackCapacity, freshWarehouseCapacity, materialCount, stackCount, stackDefinition, stackList, stackQualityLabel, stackRemaining,
+  transferStack, upgradeFreshWarehouse, upgradeWarehouse, usedCapacity, usedFreshStorageCapacity, usedStorageCapacity,
+  warehouseCapacity, warehouseGroups
+} from '../game/inventory/inventory.js';
+import {
+  allocateParameterPoint, characterById, derived, derivedCharacter, expToNext, partyMembers, recruitableCharacters,
+  setTactic, TACTICS, PARAMETER_LABELS, togglePartyMember
+} from '../game/characters/characters.js';
+import { equip, sellEquipment } from '../game/equipment/actions.js';
+import { equipmentList, gearById, gearDisplayName, gearStats } from '../game/equipment/model.js';
+import { itemBookEntries, itemBookEntry, monsterBookEntries, monsterBookEntry } from '../game/encyclopedia/encyclopedia.js';
+import { phaseInfo } from '../game/time/clock.js';
+import {
+  adjacentNodes, areaTransitionStatus, bossStatus, camp, campStatus, currentLocalArea, currentLocation, currentPlace,
+  enterLocalArea, harvestResult, leaveLocalArea, lifeSkillInfo, localAdjacentNodes, localAreaEntry, localAreaType, localMove,
+  localPatrol, patrol, resourceStatus, resolveGatherEncounter, restAtTown, sleepDuration, startExpedition, travelTo,
+  useAreaTransition, useFieldItem, useRura
+} from '../game/exploration/exploration.js';
+import {
+  battleCurrentActor, battleItemStacks, battleSkillList, battleSpellList, command, defeatReturn, finishBattle, livingEnemies
+} from '../game/battle/battle.js';
+import { buyConsumable, sellAll, sellAllValuables, sellStack, upgradeBackpack } from '../game/economy/economy.js';
+import { canCraft, collectForgeOrder, forgeOrders, forgeRecipeProduct, orderCraft, recipeRequirements, selfCraft } from '../game/crafting/forge.js';
+import { alchemyMaxBatch, alchemyRecipeProduct, beginManualAlchemy, canAlchemy, completeManualAlchemy, simpleAlchemy } from '../game/crafting/alchemy-actions.js';
 
 import {
   addAlchemyIngredient, advanceAlchemySession, alchemyIngredientInfo, alchemyStatus, applyAlchemyStir,
   createAlchemySession, evaluateAlchemy, setAlchemyHeat
-} from '../core/alchemy.js';
+} from '../game/crafting/alchemy/simulator.js';
 
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pct=(a,b)=>Math.max(0,Math.min(100,b?100*a/b:0));
-const fmtCost=cost=>Object.entries(cost).map(([id,n])=>`${materials[id].icon}${materials[id].name} ${n}`).join(' / ');
-const lifeText=s=>s.remainingLife==null?'保存期限なし':`寿命 ${stackRemaining(s)}step`;
-const qText=s=>stackQualityLabel(s)||'品質0';
-const tagText=id=>ITEM_TAGS[stackDefinition(id)?.tag]||'その他';
-const rarityBadge=def=>`<span class="rank-badge rarity-rank">R${rarityOf(def)}</span>`;
-const productDef=p=>p?.def||null;
+import { esc, pct, fmtCost, lifeText, qText, tagText, rarityBadge, productDef } from './helpers.js';
 
 export class AppUI{
   constructor(root,state,onChange){

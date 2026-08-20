@@ -1,0 +1,30 @@
+export const recipes=[
+  // 中間素材
+  {id:'m_iron_ingot',material:'iron_ingot',count:1,category:'material',cost:{iron_ore:3}},
+  {id:'m_treated_leather',material:'treated_leather',count:1,category:'material',cost:{rabbit_fur:3,slime_gel:1}},
+  {id:'m_reinforced_lumber',material:'reinforced_lumber',count:1,category:'material',cost:{hardwood:2,slime_gel:1}},
+  {id:'m_crystal_powder',material:'crystal_powder',count:1,category:'material',cost:{magic_crystal:2,hard_stone:1}},
+
+  {id:'r_hunting_knife',item:'hunting_knife',cost:{iron_ore:2,softwood:1}},
+  {id:'r_iron_sword',item:'iron_sword',cost:{iron_ore:4,slime_gel:2}},
+  {id:'r_iron_spear',item:'iron_spear',cost:{iron_ore:4,hardwood:2}},
+  {id:'r_fang',item:'fang_blade',cost:{iron_ingot:1,beast_fang:4,wolf_claw:2}},
+  {id:'r_oak_staff',item:'oak_staff',cost:{reinforced_lumber:2,magic_crystal:1,spore_sac:2}},
+  {id:'r_mountain_axe',item:'mountain_axe',cost:{iron_ingot:2,reinforced_lumber:1,boar_tusk:1}},
+  {id:'r_crystal_sword',item:'crystal_sword',cost:{iron_ingot:2,crystal_powder:2,lizard_scale:3}},
+  {id:'r_flame',item:'flame_blade',cost:{flame_crystal:3,crystal_powder:2,iron_ingot:2}},
+  {id:'r_leather',item:'leather_armor',cost:{treated_leather:2,beast_fang:2}},
+  {id:'r_chain',item:'chain_mail',cost:{iron_ingot:3,goblin_cloth:3}},
+  {id:'r_scale_mail',item:'scale_mail',cost:{lizard_scale:8,iron_ingot:2,boar_hide:2}},
+  {id:'r_robe',item:'mystic_robe',cost:{crystal_powder:2,cursed_cloth:4,spore_sac:2}},
+  {id:'r_iron_shield',item:'iron_shield',cost:{iron_ingot:2,softwood:2}},
+  {id:'r_bone_shield',item:'bone_shield',cost:{bone:6,reinforced_lumber:1,slime_gel:2}},
+  {id:'r_fur_cap',item:'fur_cap',cost:{treated_leather:1,wolf_pelt:1}},
+  {id:'r_iron_helm',item:'iron_helm',cost:{iron_ingot:2,lizard_scale:2}},
+  {id:'r_leather_gloves',item:'leather_gloves',cost:{treated_leather:1,goblin_cloth:2}},
+  {id:'r_iron_gauntlets',item:'iron_gauntlets',cost:{iron_ingot:2,lizard_scale:2}},
+  {id:'r_wolf_pants',item:'wolf_pants',cost:{wolf_pelt:3,treated_leather:1}},
+  {id:'r_mountain_boots',item:'mountain_boots',cost:{boar_hide:2,iron_ingot:1,wolf_pelt:1}},
+  {id:'r_fang_charm',item:'fang_charm',cost:{beast_fang:3,wolf_claw:2}},
+  {id:'r_relic_charm',item:'relic_charm',cost:{old_relic:3,crystal_powder:1,ancient_gear:2}}
+];

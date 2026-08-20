@@ -1,0 +1,13 @@
+import './catalog-normalize.js';
+export { items } from './items/equipment.js';
+export { materials } from './items/materials.js';
+export { consumables } from './items/consumables.js';
+export { battleSkills, battleSpells } from './battle/actions.js';
+export { backpacks } from './inventory/backpacks.js';
+export { enemies } from './monsters/enemies.js';
+export { zones } from './world/zones.js';
+export { worldNodes, worldEdges } from './world/world-map.js';
+export { localAreas } from './world/local-areas.js';
+export { recipes } from './crafting/forge-recipes.js';
+export { alchemyRecipes } from './crafting/alchemy-recipes.js';
+export { randomEvents } from './world/random-events.js';

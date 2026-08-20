@@ -1,0 +1,47 @@
+export const worldNodes = {
+  town:{id:'town',name:'ミナト村',icon:'🏘️',zone:'village',x:51,y:88,desc:'探索の拠点。町へ戻るにはここで足踏みする。'},
+  west_road:{id:'west_road',name:'西の街道',icon:'🛤️',zone:'outskirts',x:38,y:81,desc:'村を一周する外周路の西側。'},
+  east_road:{id:'east_road',name:'東の街道',icon:'🛤️',zone:'outskirts',x:66,y:81,desc:'荷車の轍が残る村東側の道。'},
+  north_gate:{id:'north_gate',name:'北門跡',icon:'⛩️',zone:'outskirts',x:52,y:72,desc:'森と山へ向かう分岐点。'},
+  herb_meadow:{id:'herb_meadow',name:'薬草の原',icon:'🌿',zone:'outskirts',x:24,y:73,desc:'いつもの場所に薬草が群生している。',resource:'herb',resourceDifficulty:1},
+  old_well:{id:'old_well',name:'古井戸',icon:'🪣',zone:'outskirts',x:14,y:62,desc:'使われなくなった井戸。'},
+  riverbank:{id:'riverbank',name:'浅瀬',icon:'🌊',zone:'river',x:14,y:49,desc:'川を渡れる浅瀬。'},
+  fishing_bend:{id:'fishing_bend',name:'魚影の濃い淵',icon:'🎣',zone:'river',x:28,y:52,desc:'魚が集まる曲がり角。',resource:'fishing',resourceDifficulty:1},
+  reed_bank:{id:'reed_bank',name:'葦の河原',icon:'🌾',zone:'river',x:4,y:52,desc:'背の高い葦が続く河原。'},
+  waterfall:{id:'waterfall',name:'小さな滝',icon:'💧',zone:'river',x:22,y:38,desc:'冷たい水が流れ落ちる。',campSafety:'semi'},
+  forest_edge:{id:'forest_edge',name:'森の入口',icon:'🌲',zone:'forest',x:40,y:60,desc:'木々が密になり始める。',campSafety:'semi'},
+  wood_grove:{id:'wood_grove',name:'伐採林',icon:'🪓',zone:'forest',x:72,y:65,desc:'切り頃の木が多い林。',resource:'woodcut',resourceDifficulty:1},
+  bee_grove:{id:'bee_grove',name:'花蜜の林',icon:'🌼',zone:'forest',x:86,y:61,desc:'花が多く、大蜂の羽音がする。'},
+  charcoal_hut:{id:'charcoal_hut',name:'炭焼き小屋跡',icon:'🛖',zone:'forest',x:82,y:52,desc:'誰もいない古い小屋。',campSafety:'safe'},
+  deep_forest:{id:'deep_forest',name:'深緑の森',icon:'🌳',zone:'forest',x:49,y:47,desc:'昼でも薄暗い森の中心部。'},
+  forest_spring:{id:'forest_spring',name:'森の泉',icon:'⛲',zone:'forest',x:37,y:39,desc:'澄んだ泉。野営しやすい。',campSafety:'safe'},
+  mushroom_ring:{id:'mushroom_ring',name:'キノコの輪',icon:'🍄',zone:'forest',x:60,y:37,desc:'妙に整ったキノコの群生地。',resource:'herb',resourceDifficulty:2},
+  old_oak:{id:'old_oak',name:'古樫の林',icon:'🌳',zone:'forest',x:70,y:30,desc:'硬い樫材が採れる奥まった林。',resource:'woodcut',resourceDifficulty:2},
+  shrine_path:{id:'shrine_path',name:'石祠への道',icon:'🪨',zone:'forest',x:29,y:29,desc:'苔むした石標が続く。'},
+  old_shrine:{id:'old_shrine',name:'森の石祠',icon:'🗿',zone:'forest',x:17,y:22,desc:'古い祠。時間帯で空気が変わる。',campSafety:'semi'},
+  mountain_foot:{id:'mountain_foot',name:'山麓',icon:'⛰️',zone:'mountain',x:69,y:46,desc:'ここから勾配が急になる。'},
+  boar_trail:{id:'boar_trail',name:'獣道',icon:'🐗',zone:'mountain',x:83,y:45,desc:'山猪の足跡が多い細道。'},
+  quarry_road:{id:'quarry_road',name:'採石道',icon:'🥾',zone:'mountain',x:80,y:39,desc:'採石場へ続く荒れた道。'},
+  quarry:{id:'quarry',name:'露天採掘場',icon:'⛏️',zone:'mountain',x:91,y:31,desc:'鉄鉱石が露出した採掘場。外から拾うことも、中へ入って本格採掘もできる。',resource:'mining',resourceDifficulty:2,interior:'iron_echo_quarry'},
+  mine_entrance:{id:'mine_entrance',name:'旧鉱山入口',icon:'🕳️',zone:'mountain',x:77,y:24,desc:'奥から冷たい風が吹く。坑道の内部へ進入できる。',campSafety:'semi',interior:'old_mine_upper'},
+  crystal_ledge:{id:'crystal_ledge',name:'晶石の崖',icon:'💎',zone:'mountain',x:94,y:20,desc:'脆い晶石が岩肌に見える危険な崖。',resource:'mining',resourceDifficulty:4},
+  high_pass:{id:'high_pass',name:'風切り峠',icon:'🌬️',zone:'mountain',x:63,y:16,desc:'村周辺を見渡せる高所。',campSafety:'safe'},
+  hidden_cave:{id:'hidden_cave',name:'崩れかけの洞穴',icon:'🪨',zone:'mountain',x:90,y:10,desc:'珍しい鉱物と洞窟生物がいる。小さな晶洞へ入れる。',resource:'mining',resourceDifficulty:3,interior:'glimmer_cave'},
+  ruin_path:{id:'ruin_path',name:'旧参道',icon:'🛣️',zone:'ruins',x:51,y:27,desc:'森から古跡へ続く石畳。',campSafety:'semi'},
+  grave_field:{id:'grave_field',name:'石墓の原',icon:'🪦',zone:'ruins',x:34,y:15,desc:'崩れた墓標が点在する。'},
+  old_ruins:{id:'old_ruins',name:'風化した遺跡',icon:'🏛️',zone:'ruins',x:47,y:8,desc:'古代の欠片が眠る危険地帯。崩れた外郭から内部へ入れる。',interior:'ashen_ruins_outer'},
+  sealed_hall:{id:'sealed_hall',name:'封じられた回廊',icon:'🚪',zone:'ruins',x:61,y:5,desc:'番人が巡回する半地下の回廊。内部へ直接入れる。',interior:'sealed_gallery'},
+  lakeside:{id:'lakeside',name:'森湖',icon:'🏞️',zone:'river',x:8,y:34,desc:'森の西端にある静かな湖。湖畔へ降りて釣り歩ける。',resource:'fishing',resourceDifficulty:2,interior:'mirror_lake_shore'},
+  fallen_bridge:{id:'fallen_bridge',name:'崩れた橋',icon:'🌉',zone:'river',x:8,y:74,desc:'川沿いを回って村へ戻る近道の跡。'}
+};
+
+const E=(a,b,steps,risk=1)=>({a,b,steps,risk});
+export const worldEdges=[
+  E('town','west_road',4,.8),E('town','east_road',4,.8),E('town','north_gate',5,.8),
+  E('west_road','herb_meadow',4,.9),E('herb_meadow','old_well',5,1),E('old_well','fallen_bridge',5,1.05),E('fallen_bridge','riverbank',5,1.05),E('riverbank','fishing_bend',4,1),E('riverbank','reed_bank',4,1),E('reed_bank','lakeside',7,1.1),E('fishing_bend','west_road',6,1.1),
+  E('north_gate','forest_edge',5,1),E('forest_edge','fishing_bend',6,1.05),E('riverbank','waterfall',6,1.1),E('waterfall','lakeside',5,1),E('lakeside','old_shrine',8,1.2),
+  E('forest_edge','deep_forest',6,1.1),E('forest_edge','wood_grove',6,1),E('wood_grove','east_road',6,1),E('wood_grove','bee_grove',5,1.05),E('bee_grove','charcoal_hut',4,1.1),E('wood_grove','charcoal_hut',5,1.1),E('charcoal_hut','mountain_foot',6,1.15),
+  E('deep_forest','forest_spring',5,1),E('deep_forest','mushroom_ring',4,1),E('mushroom_ring','old_oak',5,1.1),E('old_oak','mountain_foot',6,1.15),E('forest_spring','shrine_path',5,1),E('shrine_path','old_shrine',5,1.1),E('shrine_path','ruin_path',6,1.15),E('mushroom_ring','ruin_path',5,1.15),
+  E('deep_forest','mountain_foot',7,1.2),E('mountain_foot','boar_trail',5,1.15),E('boar_trail','quarry_road',4,1.2),E('mountain_foot','quarry_road',5,1.1),E('quarry_road','quarry',5,1.1),E('quarry_road','east_road',7,1.15),E('quarry','mine_entrance',5,1.2),E('quarry','crystal_ledge',6,1.35),E('mine_entrance','high_pass',7,1.3),E('mine_entrance','hidden_cave',6,1.35),E('hidden_cave','crystal_ledge',5,1.4),
+  E('ruin_path','grave_field',5,1.25),E('grave_field','old_ruins',4,1.35),E('ruin_path','old_ruins',6,1.35),E('old_ruins','sealed_hall',5,1.45),E('ruin_path','high_pass',7,1.3)
+];

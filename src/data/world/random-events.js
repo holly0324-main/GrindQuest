@@ -1,0 +1,22 @@
+export const randomEvents=[
+  {id:'dew_herb',zones:['outskirts','forest'],phases:['morning'],weight:5,text:'朝露の残る葉陰に薬草を見つけた。',effect:{herb:1}},
+  {id:'fallen_branch',zones:['forest'],weight:4,text:'折れた枝の中に使えそうな木材があった。',effect:{cargo:['softwood',1]}},
+  {id:'mushrooms',zones:['forest'],weight:4,text:'木の根元に森キノコがまとまって生えている。',effect:{cargo:['mushroom',1]}},
+  {id:'ore_chip',zones:['mountain'],weight:4,text:'道端の岩肌に鉱脈の欠片が見えた。',effect:{cargo:['iron_ore',1]}},
+  {id:'honey_scent',zones:['forest'],phases:['morning','day'],weight:2,text:'甘い香りのする蜜を少し見つけた。',effect:{cargo:['honey_drop',1]}},
+  {id:'fish_jump',zones:['river'],weight:3,text:'水面で大きな魚が跳ねた。近くに魚群がいるようだ。',effect:{note:'fish'}},
+  {id:'clear_water',zones:['river','forest'],phases:['morning','day'],weight:2,text:'冷たい清水で顔を洗い、頭が冴えた。',effect:{exp:2}},
+  {id:'quiet_breeze',zones:['outskirts','mountain'],weight:3,text:'風が抜け、しばらく周囲が静まり返った。',effect:{encounterMod:-.08,moves:2}},
+  {id:'thick_fog',zones:['forest','mountain'],phases:['night'],weight:3,text:'急に霧が濃くなった。しばらく魔物に遭いやすそうだ。',effect:{encounterMod:.12,moves:2}},
+  {id:'tracks',zones:['forest','mountain'],weight:3,text:'新しい獣の足跡が続いている。少し遠回りした。',effect:{steps:3}},
+  {id:'old_pack',zones:['ruins','mountain'],weight:2,text:'破れた古い荷袋から素材を拾い上げた。',effect:{randomCargo:['bone','iron_ore','old_relic','goblin_coin']}},
+  {id:'moon_crystal',zones:['ruins'],phases:['night'],weight:2,text:'月明かりに反応して小さな魔結晶が光っている。',effect:{cargo:['magic_crystal',1]}},
+  {id:'wild_herb',zones:['outskirts','river','forest'],weight:4,text:'道脇に薬草を一本見つけた。',effect:{herb:1}},
+  {id:'ripped_map',zones:['ruins','forest'],weight:2,text:'古い地図の切れ端を見つけた。道筋を少し覚えた。',effect:{exp:2}},
+  {id:'owl',zones:['forest'],phases:['night'],weight:3,text:'フクロウの声だけが響く。何も起きなかった。',effect:{}},
+  {id:'stones',zones:['mountain'],weight:3,text:'足元が崩れ、慎重に歩いたため少し時間を使った。',effect:{steps:2}},
+  {id:'old_fire',zones:['forest','ruins'],weight:2,text:'まだ温かい焚き火跡がある。誰かが近くにいるのかもしれない。',effect:{exp:1}},
+  {id:'rare_fang',zones:['forest'],phases:['night'],weight:1,text:'獣が落とした大きな牙を見つけた。',effect:{cargo:['beast_fang',1]}},
+  {id:'ruin_coin',zones:['ruins'],weight:2,text:'石の隙間から古い小銭が出てきた。',effect:{cargo:['goblin_coin',1]}},
+  {id:'nothing',zones:['outskirts','river','forest','mountain','ruins'],weight:8,text:'特に何事もなく道を進んだ。',effect:{}}
+];

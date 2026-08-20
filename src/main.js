@@ -1,5 +1,5 @@
-import { defaultState, normalize } from './core/game.js';
-import { clearState, loadState, saveState } from './core/storage.js';
+import { defaultState, normalize } from './game/state/state.js';
+import { clearState, loadState, saveState } from './game/save/storage.js';
 import { AppUI } from './ui/app.js';
 
 const root=document.querySelector('#app');

@@ -1,0 +1,6 @@
+import { items } from '../../data/index.js';
+import { characterById, derivedCharacter } from '../characters/characters.js';
+import { equipmentList, gearById, gearDisplayName } from './model.js';
+
+export function equip(state,gearId,charId='hero'){let g=gearById(state,gearId);if(!g&&items[gearId])g=equipmentList(state,items[gearId].slot).find(x=>x.baseId===gearId);if(!g)return false;const slot=items[g.baseId]?.slot,c=characterById(state,charId);if(!slot||!c)return false;for(const other of Object.values(state.characters||{}))for(const [k,v] of Object.entries(other.equipment||{}))if(v===g.gearId)other.equipment[k]=null;c.equipment[slot]=g.gearId;const d=derivedCharacter(state,c);c.hp=Math.min(c.hp,d.maxHp);c.mp=Math.min(c.mp,d.maxMp);return true;}
+export function sellEquipment(state,gearId){if(state.run)return{ok:false,msg:'装備売却は村で。'};const g=gearById(state,gearId);if(!g)return{ok:false,msg:'装備がない。'};if(Object.values(state.characters||{}).some(c=>Object.values(c.equipment||{}).includes(g.gearId)))return{ok:false,msg:'誰かが装備中の品は売れない。'};const b=items[g.baseId],affixBonus=(g.affixes||[]).length*.08,gain=Math.max(1,Math.round((b.price||50)*(.45+g.workmanship*.08+affixBonus)));state.gear=state.gear.filter(x=>x.gearId!==g.gearId);state.gold+=gain;return{ok:true,gain,msg:`${gearDisplayName(state,g)}を ${gain}G で売った。`};}
