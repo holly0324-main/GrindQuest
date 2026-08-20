@@ -34,7 +34,6 @@ s.battle={enemies:[
 ],over:false,won:false,escaped:false,turn:1,escapeAttempts:0,guards:{},pending:{},log:['test']};
 q=command(s,'attack',{actorId:'hero',targetId:'enemy_2'});assert.equal(q.resolved,true);assert.equal(s.battle.enemies.length,3);assert.ok(q.events.some(x=>x.kind==='party'));assert.ok(q.events.some(x=>x.kind==='enemy'));
 
-// v0.13 save migrates to party structure with hero preserved.
-const m=normalize({version:13,player:{name:'旧主人公',level:4,exp:3,hp:20,mp:5,stats:{vitality:60,strength:15,agility:10,magic:9,wisdom:9,knowledge:8,dexterity:8},equipment:{}},calendar:{totalSteps:0}});
-assert.equal(m.characters.hero.name,'旧主人公');assert.equal(m.player,m.characters.hero);assert.deepEqual(m.party,['hero']);assert.ok(m.characters.boris);
+// v0.14 party model remains the compatibility baseline.
+const old=defaultState();old.version=14;const m=normalize(old);assert.deepEqual(m.party,['hero']);assert.ok(m.characters.hero);assert.ok(m.characters.boris);
 console.log('v0.14 ok');

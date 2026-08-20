@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import {advanceTime,backpackCapacity,buyConsumable,camp,defaultState,derived,phaseInfo,restAtTown,sleepDuration,startExpedition,worldNodes} from '../src/core/game.js';
+import {advanceTime,backpackCapacity,buyConsumable,camp,characterById,defaultState,derivedCharacter,phaseInfo,restAtTown,sleepDuration,startExpedition,worldNodes} from '../src/core/game.js';
 const s=defaultState();
 assert.equal(phaseInfo(s).phaseSteps,50);assert.equal(backpackCapacity(s),40);assert.ok(Object.keys(worldNodes).length>=34);
 assert.equal(startExpedition(s).ok,true);
-s.run=null;s.calendar.totalSteps=30;s.calendar.day=1;s.calendar.stepOfDay=30;s.player.hp=1;s.player.mp=0;
-assert.equal(sleepDuration(s),20);restAtTown(s);assert.equal(phaseInfo(s).name,'昼');assert.equal(s.player.hp,derived(s).maxHp);
+s.run=null;s.calendar.totalSteps=30;s.calendar.day=1;s.calendar.stepOfDay=30;const hero=characterById(s,'hero');hero.hp=1;hero.mp=0;
+assert.equal(sleepDuration(s),20);restAtTown(s);assert.equal(phaseInfo(s).name,'昼');assert.equal(hero.hp,derivedCharacter(s,hero).maxHp);
 advanceTime(s,300);assert.equal(s.condition.fatigueStacks,1);advanceTime(s,50);assert.equal(s.condition.fatigueStacks,2);restAtTown(s);assert.equal(s.condition.fatigueStacks,0);
-s.gold=1000;assert.equal(buyConsumable(s,'camp_set').ok,true);startExpedition(s);s.run.location='forest_spring';s.player.hp=1;s.player.mp=0;const max=derived(s);const c=camp(s);assert.equal(c.ok,true);assert.ok(s.player.hp>1&&s.player.hp<max.maxHp);
+s.gold=1000;assert.equal(buyConsumable(s,'camp_set').ok,true);startExpedition(s);s.run.location='forest_spring';hero.hp=1;hero.mp=0;const max=derivedCharacter(s,hero);const c=camp(s);assert.equal(c.ok,true);assert.ok(hero.hp>1&&hero.hp<max.maxHp);
 console.log('smoke ok');
